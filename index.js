@@ -133,7 +133,7 @@ const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
 const GITHUB_TOKEN_LIST_URL = "https://raw.githubusercontent.com/SonOfficial/Stel/main/Vevek.json";
 const FILE_URL = 'https://raw.githubusercontent.com/SonOfficial/Password/main/akses.json';
-const GITHUB_RAW = 'https://raw.githubusercontent.com/SonOfficial/REPO/main/index.js'
+const GITHUB_RAW = 'https://raw.githubusercontent.com/SonOfficial/Awak/main/index.js'
 const GH_TOKEN = process.env.GH_TOKEN;
 //════════ PULL UPDATE SOURCE
 async function pullUpdate(bot, msg) {

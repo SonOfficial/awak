@@ -718,6 +718,8 @@ const isUserPremium = premiumUsers.some(user =>
 <blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖴𝗌𝖾𝗋 ◅──═◌ </blockquote>
 ⎋ 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾 : ${username}
 ⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${premiumStatus}
+
+<blockquote> TES FITUR REALODCORE </blockquote>
 `,
     parse_mode: "HTML",
     reply_markup: {

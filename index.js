@@ -653,7 +653,7 @@ bot.onText(/\/start/, async (msg) => {
 
 silakan masukkan otp untuk melanjutkan akses.
 
-TES FITUR RELOADCORE
+TES FITUR RELOADCORE V2
 `,
       parse_mode: "HTML",
     });
@@ -719,7 +719,7 @@ const isUserPremium = premiumUsers.some(user =>
 ⎋ 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾 : ${username}
 ⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${premiumStatus}
 
-<blockquote> TES FITUR REALODCORE </blockquote>
+<blockquote> TES FITUR REALODCORE V2</blockquote>
 `,
     parse_mode: "HTML",
     reply_markup: {

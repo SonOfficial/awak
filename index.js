@@ -317,7 +317,7 @@ console.log(chalk.blue(`
 │  INFORMATION SCRIPT
 ├──────────────────────────┤
 │ NAME SCRIPT: Kairn Base
-│ VERSION : 2.8.0
+│ VERSION : Latest Version
 │ STATUS : BOT RUNNING
 └──────────────────────────┘
 `));
@@ -717,7 +717,7 @@ const isUserPremium = premiumUsers.some(user =>
 ───────────────────────
 <blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖴𝗌𝖾𝗋 ◅──═◌ </blockquote>
 ⎋ 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾 : ${username}
-⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${premiumstatus}
+⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${premiumStatus}
 `,
     parse_mode: "HTML",
     reply_markup: {
@@ -848,7 +848,7 @@ bot.on("callback_query", async (callbackQuery) => {
 ───────────────────────
 <blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖴𝗌𝖾𝗋 ◅──═◌ </blockquote>
 ⎋ 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾 : ${username}
-⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${premiumstatus}
+⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${premiumStatus}
       `;
       newButtons = [
         [

@@ -1829,10 +1829,7 @@ Mohon tunggu sebentar.
 
         await connectToWhatsApp(botNumber, chatId);
 
-        await bot.sendMessage(chatId, `
-✅ *Berhasil terhubung!*
-Bot WhatsApp aktif dengan nomor: *${botNumber}*
-`, { parse_mode: "Markdown" });
+        
 
     } catch (error) {
         console.error("❌ Error in /connect:", error);

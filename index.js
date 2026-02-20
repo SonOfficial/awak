@@ -66,7 +66,7 @@ const {
     templateMessage,
     InteractiveMessage,
     Header,
-} = require("@whiskeysockets/baileys")
+} = require("xatabail")
 const fs = require("fs-extra");
 const JsConfuser = require("js-confuser");
 const P = require("pino");
@@ -260,44 +260,21 @@ async function validateToken() {
 // ================= BOT START =================
 function startBot() {
     console.log(chalk.red(`
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣷⠀⣇⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⢻⡟⢠⣿⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⣸⡏⡼⢁⣾⣿⡇⠀⢀⡄⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⡤⣼⡀⠀⠀⠀⠀⢀⣴⢏⠔⣥⣿⢿⣿⠁⣠⣾⠃⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣀⣾⣿⠟⠀⠀⣀⣤⠶⢋⣡⡶⠿⠋⠥⣛⣥⣾⠿⠋⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣼⣟⣿⡟⢿⣄⢙⣿⣷⠟⠋⠉⣀⣒⣛⣛⣋⣉⣀⡴⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣿⠿⠋⠀⣸⣿⣾⡟⣀⣴⠾⠛⠛⠛⣛⣿⣿⡿⠟⠁⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠁⠀⠀⣰⣿⣿⡟⡴⠋⣀⣀⡐⠲⠾⠛⠛⡉⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⠎⠀⢊⣁⠨⣝⣶⣤⣤⡾⠁⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⡏⢠⠞⠉⠙⢿⡌⠿⠿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⡇⠨⠲⢦⢰⣼⣷⣤⠔⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣇⢹⡆⡀⣾⡇⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠺⠡⣿⡘⠛⠒⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢨⣉⠁⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣾⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣼⣿⡇⢹⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠞⠉⢩⣿⣿⠁⢨⣿⡇⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣤⣶⣿⢟⠃⢀⣾⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⢠⠞⠛⠉⠉⢉⡅⠂⣿⢠⡿⠋⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠠⠃⠀⠀⠀⢰⣿⣤⣾⡏⢸⢁⣾⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⡟⠉⠀⠸⢸⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡇⠀⠀⢀⣸⠿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠀⠀⠀⠀⠀⠀⠘⢿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠘⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀
+    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⡋⠁⠀⠀⠀⠀⢀⣀⣀⡀
+⠀⠀⠀⠀⠀⠠⠒⣶⣶⣿⣿⣷⣾⣿⣿⣿⣿⣛⣋⣉⠀⠀
+⠀⠀⠀⠀⢀⣤⣞⣫⣿⣿⣿⡻⢿⣿⣿⣿⣿⣿⣦⡀⠀⠀
+⠀⠀⣶⣾⡿⠿⠿⠿⠿⠋⠈⠀⣸⣿⣿⣿⣿⣷⡈⠙⢆⠀
+⠀⠀⠉⠁⠀⠤⣤⣤⣤⣤⣶⣾⣿⣿⣿⣿⠿⣿⣷⠀⠀⠀
+⠀⠀⣠⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⢹⣿⠀⠀⠀
+⢠⣾⣿⣿⣿⣿⠟⠋⠉⠛⠋⠉⠁⣀⠀⠀⠀⠸⠃⠀⠀⠀
+⣿⣿⣿⣿⠹⣇⠀⠀⠀⠀⢀⡀⠀⢀⡙⢷⣦⣄⡀⠀⠀⠀
+⣿⢿⣿⣿⣷⣦⠤⠤⠀⠀⣠⣿⣶⣶⣿⣿⣿⣿⣿⣷⣄⠀
+⠈⠈⣿⡿⢿⣿⣿⣷⣿⣿⡿⢿⣿⣿⣁⡀⠀⠀⠉⢻⣿⣧
+⠀⢀⡟⠀⠀⠉⠛⠙⠻⢿⣦⡀⠙⠛⠯⠤⠄⠀⠀⠈⠈⣿
+⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⡆⠀⠀⠀⠀⠀⠀⠀⢀⠟
     `));
     
-    console.log(chalk.blue(`
-█▀ ▀█▀ █▀▀ █░ █░ ▄▀█ █▀█
-▄█ ░█░ ██▄ █▄ █▄ █▀█ █▀▄
-
-░█▀ █▀▀ █▀ █░█ █▀█ █ ▀█▀ █▄█
-░▄█ ██▄ █▄ █▄█ █▀▄ █ ░█░ ░█░
-    `));
-
     console.log(chalk.yellow.bold(`
 ┌──────────────────────────┐
 │  INFORMATION SCRIPT
@@ -319,227 +296,170 @@ async function main() {
 main();
 
 // --------------- ( Save Session & Installasion WhatsApp ) ------------------- \\
+let sock
+const sessions = new Map()
+const pairingRequested = new Set()
 
-let sock; // Global sock untuk kompatibilitas
+function createSessionDir(botNumber) {
+    const dir = path.join(SESSIONS_DIR, `device${botNumber}`)
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    return dir
+}
 
 function saveActiveSessions(botNumber) {
     try {
-        const sessionsList = [];
+        let list = []
         if (fs.existsSync(SESSIONS_FILE)) {
-            const existing = JSON.parse(fs.readFileSync(SESSIONS_FILE));
-            if (!existing.includes(botNumber)) {
-                sessionsList.push(...existing, botNumber);
-            } else {
-                sessionsList.push(...existing);
-            }
-        } else {
-            sessionsList.push(botNumber);
+            list = JSON.parse(fs.readFileSync(SESSIONS_FILE))
         }
-        fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessionsList));
-    } catch (error) {
-        console.error("Error saving session:", error);
+        if (!list.includes(botNumber)) {
+            list.push(botNumber)
+            fs.writeFileSync(SESSIONS_FILE, JSON.stringify(list))
+        }
+    } catch (e) {
+        console.error("save session error:", e)
     }
 }
 
+/* ===============================
+   AUTO INIT SESSION (NO PAIRING)
+================================= */
 async function initializeWhatsAppConnections() {
-    try {
-        if (fs.existsSync(SESSIONS_FILE)) {
-            const activeNumbers = JSON.parse(fs.readFileSync(SESSIONS_FILE));
-            console.log(`Ditemukan ${activeNumbers.length} sesi WhatsApp aktif`);
+    if (!fs.existsSync(SESSIONS_FILE)) return
 
-            for (const botNumber of activeNumbers) {
-                console.log(`Mencoba menghubungkan WhatsApp: ${botNumber}`);
-                const sessionDir = createSessionDir(botNumber);
-                const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+    const numbers = JSON.parse(fs.readFileSync(SESSIONS_FILE))
+    console.log("restore session:", numbers.length)
 
-                const sockInstance = makeWASocket({
-                    auth: state,
-                    printQRInTerminal: true,
-                    logger: P({ level: "silent" }),
-                    defaultQueryTimeoutMs: undefined,
-                });
+    for (const botNumber of numbers) {
+        const sessionDir = createSessionDir(botNumber)
+        const { state, saveCreds } = await useMultiFileAuthState(sessionDir)
 
-                await new Promise((resolve, reject) => {
-                    sockInstance.ev.on("connection.update", async (update) => {
-                        const { connection, lastDisconnect } = update;
-                        if (connection === "open") {
-                            console.log(`Bot ${botNumber} terhubung!`);
-                            sessions.set(botNumber, sockInstance);
-                            sock = sockInstance; // Update global sock
-                            resolve();
-                        } else if (connection === "close") {
-                            const shouldReconnect =
-                                lastDisconnect?.error?.output?.statusCode !==
-                                DisconnectReason.loggedOut;
-                            if (shouldReconnect) {
-                                console.log(`Mencoba menghubungkan ulang bot ${botNumber}...`);
-                                await initializeWhatsAppConnections();
-                            } else {
-                                reject(new Error("Koneksi ditutup"));
-                            }
-                        }
-                    });
+        const sockInstance = makeWASocket({
+            auth: state,
+            printQRInTerminal: false,
+            logger: P({ level: "silent" }),
+            defaultQueryTimeoutMs: 30000
+        })
 
-                    sockInstance.ev.on("creds.update", saveCreds);
-                });
+        sockInstance.ev.on("connection.update", (update) => {
+            if (update.connection === "open") {
+                sessions.set(botNumber, sockInstance)
+                sock = sockInstance
+                console.log("connected:", botNumber)
             }
-        }
-    } catch (error) {
-        console.error("Error initializing WhatsApp connections:", error);
+
+            if (update.connection === "close") {
+                const code = update.lastDisconnect?.error?.output?.statusCode
+                if (code !== DisconnectReason.loggedOut) {
+                    console.log("reconnect:", botNumber)
+                    initializeWhatsAppConnections()
+                } else {
+                    fs.rmSync(sessionDir, { recursive: true, force: true })
+                }
+            }
+        })
+
+        sockInstance.ev.on("creds.update", saveCreds)
     }
 }
 
-function createSessionDir(botNumber) {
-    const deviceDir = path.join(SESSIONS_DIR, `device${botNumber}`);
-    if (!fs.existsSync(deviceDir)) {
-        fs.mkdirSync(deviceDir, { recursive: true });
-    }
-    return deviceDir;
-}
-
-//// --- ( Instalasi WhatsApp ) --- \\\
+/* ===============================
+   MANUAL PAIRING (CUSTOM FAST)
+================================= */
 async function connectToWhatsApp(botNumber, chatId) {
-    let statusMessage = await bot
-        .sendMessage(
-            chatId,
-            `
-<blockquote>┌─────────────────────────┐
-│  MENYIAPKAN CODE PAIRING
+    const statusMsg = await bot.sendMessage(
+        chatId,
+        `<blockquote>
+┌─────────────────────────┐
+│ MENYIAPKAN PAIRING
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
-└─────────────────────────┘</blockquote>
-`,
-            { parse_mode: "HTML" }
-        )
-        .then((msg) => msg.message_id);
+└─────────────────────────┘
+</blockquote>`,
+        { parse_mode: "HTML" }
+    )
 
-    const sessionDir = createSessionDir(botNumber);
-    const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+    const sessionDir = createSessionDir(botNumber)
+    const { state, saveCreds } = await useMultiFileAuthState(sessionDir)
 
     const sockInstance = makeWASocket({
         auth: state,
         printQRInTerminal: false,
         logger: P({ level: "silent" }),
-        defaultQueryTimeoutMs: undefined,
-    });
-
-    let pairingCodeRequested = false; // Flag untuk menghindari permintaan berulang
+        defaultQueryTimeoutMs: 30000
+    })
 
     sockInstance.ev.on("connection.update", async (update) => {
-        const { connection, lastDisconnect } = update;
+        const { connection, lastDisconnect } = update
 
-        if (connection === "close") {
-            const statusCode = lastDisconnect?.error?.output?.statusCode;
-            if (statusCode && statusCode >= 500 && statusCode < 600) {
-                await bot.editMessageText(
-                    `
-<blockquote>┌─────────────────────────┐
-│ Memproses Connection
-├─────────────────────────┤
-│ Nomor : ${botNumber}
-│ Status : Proses 🔄.
-└─────────────────────────┘</blockquote>
-`,
-                    {
-                        chat_id: chatId,
-                        message_id: statusMessage,
-                        parse_mode: "HTML",
-                    }
-                );
-                await connectToWhatsApp(botNumber, chatId);
-            } else {
-                await bot.editMessageText(
-                    `
-<blockquote>┌─────────────────────────┐
-│ Connection Gagal
-├─────────────────────────┤
-│ Nomor : ${botNumber}
-│ Status :  Gagal ❌
-└─────────────────────────┘</blockquote>
-`,
-                    {
-                        chat_id: chatId,
-                        message_id: statusMessage,
-                        parse_mode: "HTML",
-                    }
-                );
+        if (connection === "connecting") {
+            if (!fs.existsSync(`${sessionDir}/creds.json`) && !pairingRequested.has(botNumber)) {
+                pairingRequested.add(botNumber)
+
                 try {
-                    fs.rmSync(sessionDir, { recursive: true, force: true });
-                } catch (error) {
-                    console.error("Error deleting session:", error);
-                }
-            }
-        } else if (connection === "open") {
-            sessions.set(botNumber, sockInstance);
-            sock = sockInstance; // Update global sock
-            saveActiveSessions(botNumber);
-            await bot.editMessageText(
-                `
-<blockquote>┌─────────────────────────┐
-│ Connection Sukses
-├─────────────────────────┤
-│ Nomor : ${botNumber}
-│ Status : Sukses Connect.✅
-└─────────────────────────┘</blockquote>
-`,
-                {
-                    chat_id: chatId,
-                    message_id: statusMessage,
-                    parse_mode: "HTML",
-                }
-            );
-        } else if (connection === "connecting") {
-            // Hanya minta pairing code sekali dan jika file creds belum ada
-            if (!fs.existsSync(`${sessionDir}/creds.json`) && !pairingCodeRequested) {
-                pairingCodeRequested = true;
-                try {
-                    // Gunakan custom code "SONKAIRN"
-                    const code = await sockInstance.requestPairingCode(botNumber, "SONKAIRN");
-                    const formattedCode = code.match(/.{1,4}/g)?.join("-") || code;
+                    const customCode = "SONKAIRN"
+                    const code = await sockInstance.requestPairingCode(botNumber, customCode)
+                    const format = code.match(/.{1,4}/g).join("-")
 
                     await bot.editMessageText(
-                        `
-<blockquote>┌─────────────────────────┐
-│ YOUR CODE PAIRING
+                        `<blockquote>
+┌─────────────────────────┐
+│ CODE PAIRING
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
-│ Kode  : <code>${formattedCode}</code>
-│ (Custom: SONKAIRN)
+│ Kode  : ${format}
 └─────────────────────────┘
-⏳ *Tunggu proses pairing...* (Jangan close chat ini)
-`,
+</blockquote>`,
                         {
                             chat_id: chatId,
-                            message_id: statusMessage,
-                            parse_mode: "HTML",
+                            message_id: statusMsg.message_id,
+                            parse_mode: "HTML"
                         }
-                    );
-                } catch (error) {
-                    console.error("Error requesting pairing code:", error);
-                    await bot.editMessageText(
-                        `
-<blockquote>┌─────────────────────────┐
-│ STATUS │ Sedang Pairing
-├─────────────────────────┤
-│ Nomor : ${botNumber}
-│ Kode  : ${error.message} Error⚠️
-└─────────────────────────┘</blockquote>
-`,
-                        {
-                            chat_id: chatId,
-                            message_id: statusMessage,
-                            parse_mode: "HTML",
-                        }
-                    );
+                    )
+                } catch (e) {
+                    pairingRequested.delete(botNumber)
+                    console.error("pair error:", e.message)
                 }
             }
         }
-    });
 
-    sockInstance.ev.on("creds.update", saveCreds);
+        if (connection === "open") {
+            sessions.set(botNumber, sockInstance)
+            sock = sockInstance
+            saveActiveSessions(botNumber)
+            pairingRequested.delete(botNumber)
 
-    return sockInstance;
+            await bot.editMessageText(
+                `<blockquote>
+┌─────────────────────────┐
+│ CONNECTED
+├─────────────────────────┤
+│ Nomor : ${botNumber}
+│ Status: SUCCESS
+└─────────────────────────┘
+</blockquote>`,
+                {
+                    chat_id: chatId,
+                    message_id: statusMsg.message_id,
+                    parse_mode: "HTML"
+                }
+            )
+        }
+
+        if (connection === "close") {
+            const code = lastDisconnect?.error?.output?.statusCode
+            if (code === DisconnectReason.loggedOut) {
+                fs.rmSync(sessionDir, { recursive: true, force: true })
+                pairingRequested.delete(botNumber)
+            }
+        }
+    })
+
+    sockInstance.ev.on("creds.update", saveCreds)
+    return sockInstance
 }
+
+
 
 // ---------- ( Read File And Save Premium - ceo - Owner ) ----------- \\
 const STELLAR_DIR = path.join(__dirname, "STELLAR");

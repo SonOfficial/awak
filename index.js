@@ -734,6 +734,9 @@ bot.on("callback_query", async (callbackQuery) => {
 
 /// --- ( Parameter ) --- \\\
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const activePolls = new Map();
+
+
 ////( CASE POLLING) \\\\
 bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
@@ -805,7 +808,7 @@ bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
         `PILIH TYPE BUG`, // Question
         ['DELAY 𝖠𝖳𝖳𝖠𝖢𝖪', 'F𝖢 𝖨𝖭𝖵𝖨𝖲𝖨𝖡𝖫𝖤', 'CRASH 𝖠𝖭𝖣𝖱𝖮𝖨𝖣', '❌ BATAL'], // Options
         {
-            is_anonymous: false, /
+            is_anonymous: false, 
             allows_multiple_answers: false, 
             reply_to_message_id: videoMsg.message_id, 
             open_period: 60 

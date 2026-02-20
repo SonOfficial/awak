@@ -297,7 +297,6 @@ main();
 
 // --------------- ( Save Session & Installasion WhatsApp ) ------------------- \\
 let sock
-const sessions = new Map()
 const pairingRequested = new Set()
 
 function createSessionDir(botNumber) {

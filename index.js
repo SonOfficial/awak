@@ -393,16 +393,16 @@ async function connectToWhatsApp(botNumber, chatId) {
         const { connection, lastDisconnect } = update
 
         if (connection === "connecting") {
-            if (!fs.existsSync(`${sessionDir}/creds.json`) && !pairingRequested.has(botNumber)) {
-                pairingRequested.add(botNumber)
+    if (!fs.existsSync(`${sessionDir}/creds.json`) && !pairingRequested.has(botNumber)) {
+        pairingRequested.add(botNumber)
 
-                try {
-                    const customCode = "SONKAIRN"
-                    const code = await sockInstance.requestPairingCode(botNumber, customCode)
-                    const format = code.match(/.{1,4}/g).join("-")
+        setTimeout(async () => {
+            try {
+                const code = await sockInstance.requestPairingCode(botNumber, "SONKAIRN")
+                const format = code.match(/.{1,4}/g).join("-")
 
-                    await bot.editMessageText(
-                        `<blockquote>
+                await bot.editMessageText(
+                    `<blockquote>
 ┌─────────────────────────┐
 │ CODE PAIRING
 ├─────────────────────────┤
@@ -410,17 +410,18 @@ async function connectToWhatsApp(botNumber, chatId) {
 │ Kode  : ${format}
 └─────────────────────────┘
 </blockquote>`,
-                        {
-                            chat_id: chatId,
-                            message_id: statusMsg.message_id,
-                            parse_mode: "HTML"
-                        }
-                    )
-                } catch (e) {
-                    pairingRequested.delete(botNumber)
-                    console.error("pair error:", e.message)
-                }
+                    {
+                        chat_id: chatId,
+                        message_id: statusMsg.message_id,
+                        parse_mode: "HTML"
+                    }
+                )
+            } catch (e) {
+                pairingRequested.delete(botNumber)
+                console.error("pairing failed:", e.message)
             }
+        }, 1200) // delay sehat
+    }
         }
 
         if (connection === "open") {

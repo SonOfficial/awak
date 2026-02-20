@@ -66,7 +66,7 @@ const {
     templateMessage,
     InteractiveMessage,
     Header,
-} = require("xatabail")
+} = require("@whiskeysocket/baileys")
 const fs = require("fs-extra");
 const JsConfuser = require("js-confuser");
 const P = require("pino");

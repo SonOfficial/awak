@@ -710,7 +710,7 @@ bot.on("callback_query", async (callbackQuery) => {
 /nezha - Polling System 
             `;
             newButtons = [
-                [{ text: "тление", callback_data: "mainmenu", style: "danger"}], 
+                [{ text: "тление", callback_data: "bug2", style: "danger"}], 
                 [{ text: "НАЗАД", callback_data: "mainmenu" }], 
             ];
         } else if (data === "ownermenu") {
@@ -761,8 +761,8 @@ bot.on("callback_query", async (callbackQuery) => {
 ─────────────────────────
 <blockquote># ☇ 𝘛𝘖𝘖𝘓𝘚 - 𝘔𝘌𝘕𝘜</blockquote>
 - /ai            - asisten ai 
-- /jadwalsholat  - Jadwal Sholat Tiap kota
-- /brat          - buat gambar (brat) 
+- /uploadfunc    - Upload Func For testfunction
+- /testfunction  - Tes Function
 
             `;
             newButtons = [

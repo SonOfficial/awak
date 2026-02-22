@@ -1925,6 +1925,183 @@ bot.onText(/^\/ai(?:\s+(.+))?/, async (msg, match) => {
     }
 })
 
+/* =====================
+   /panel
+===================== */
+bot.onText(/^\/panel$/, async (msg) => {
+  const chatId = msg.chat.id
+  try {
+    const hostname = os.hostname()
+    const cpuModel = os.cpus()[0].model
+    const cpuCore = os.cpus().length
+    const totalMem = Math.round(os.totalmem() / 1024 / 1024)
+    const platform = os.platform()
+    const arch = os.arch()
+    const uptimeOs = Math.floor(os.uptime() / 3600)
+
+    const now = new Date().toLocaleString("id-ID", {
+      timeZone: "Asia/Jakarta"
+    })
+
+    const ip = (await axios.get("https://api.ipify.org?format=json")).data.ip
+
+    const text = `
+💻 <blockquote><b>PANEL INFORMATION</b></blockquote>
+━━━━━━━━━━━━━━━━━━
+🖥️ <b>Hostname:</b> ${hostname}
+🧠 <b>CPU:</b> ${cpuModel} (${cpuCore} core)
+💾 <b>Total RAM:</b> ${totalMem} mb
+⚙️ <b>OS:</b> ${platform.toUpperCase()} (${arch})
+📡 <b>Public IP:</b> ${ip}
+⏱️ <b>Uptime Server:</b> ${uptimeOs} jam
+📅 <b>Waktu:</b> ${now}
+━━━━━━━━━━━━━━━━━━
+<blockquote>data real-time dari panel host kamu</blockquote>
+`
+    bot.sendMessage(chatId, text, { parse_mode: "HTML" })
+  } catch {
+    bot.sendMessage(chatId, "panel error. server lu lagi manyun.")
+  }
+})
+
+/* =====================
+   /waifu
+===================== */
+bot.onText(/^\/waifu$/, async (msg) => {
+  const chatId = msg.chat.id
+  try {
+    const { data } = await axios.get("https://api.nvidiabotz.xyz/random/waifu")
+    bot.sendPhoto(chatId, data.result)
+  } catch {
+    bot.sendMessage(chatId, "waifu ngumpet. coba lagi.")
+  }
+})
+
+/* =====================
+   /github <username>
+===================== */
+bot.onText(/^\/github\s+(.+)/, async (msg, match) => {
+  const chatId = msg.chat.id
+  const user = match[1]
+  try {
+    const { data } = await axios.get(
+      "https://api.nvidiabotz.xyz/stalk/github?username=" +
+      encodeURIComponent(user)
+    )
+
+    const u = data.result
+    const cap =
+`github stalk
+username : ${u.login}
+nama     : ${u.name || "-"}
+bio      : ${u.bio || "-"}
+repo     : ${u.public_repos}
+followers: ${u.followers}
+following: ${u.following}
+url      : ${u.html_url}`
+
+    bot.sendPhoto(chatId, u.avatar_url, { caption: cap })
+  } catch {
+    bot.sendMessage(chatId, "github error. user ga ada atau api ngambek.")
+  }
+})
+
+/* =====================
+   /youtube <query>
+===================== */
+bot.onText(/^\/youtube\s+(.+)/, async (msg, match) => {
+  const chatId = msg.chat.id
+  const q = match[1]
+
+  try {
+    const { data } = await axios.get(
+      "https://api.nvidiabotz.xyz/search/youtube?q=" +
+      encodeURIComponent(q)
+    )
+
+    const v = data.result[0]
+
+    bot.sendPhoto(chatId, v.thumbnail, {
+      caption: `${v.title}`,
+      reply_markup: {
+        inline_keyboard: [[
+          { text: "buka youtube", url: v.url }
+        ]]
+      }
+    })
+  } catch {
+    bot.sendMessage(chatId, "youtube error. hasil kosong.")
+  }
+})
+
+/* =====================
+   /ceksholat <kota>
+===================== */
+bot.onText(/^\/ceksholat\s+(.+)/, async (msg, match) => {
+  const chatId = msg.chat.id
+  const kota = match[1]
+
+  try {
+    const { data } = await axios.get(
+      "https://api.nvidiabotz.xyz/tools/ceksholat?kota=" +
+      encodeURIComponent(kota)
+    )
+
+    const j = data.result
+    const teks =
+`jadwal sholat ${kota}
+
+subuh   : ${j.subuh}
+dzuhur  : ${j.dzuhur}
+ashar   : ${j.ashar}
+maghrib : ${j.maghrib}
+isya    : ${j.isya}`
+
+    bot.sendMessage(chatId, teks)
+  } catch {
+    bot.sendMessage(chatId, "kota ga ketemu atau api mati.")
+  }
+})
+
+/* =====================
+   /brat <text> (sticker)
+===================== */
+bot.onText(/^\/brat\s+(.+)/, async (msg, match) => {
+  const chatId = msg.chat.id
+  const text = match[1]
+
+  try {
+    const url =
+      "https://api.nvidiabotz.xyz/imagecreator/bratv?text=" +
+      encodeURIComponent(text)
+
+    bot.sendSticker(chatId, url)
+  } catch {
+    bot.sendMessage(chatId, "brat error. teks lu aneh.")
+  }
+})
+
+/* =====================
+   /gimage <query>
+===================== */
+bot.onText(/^\/gimage\s+(.+)/, async (msg, match) => {
+  const chatId = msg.chat.id
+  const query = match[1]
+
+  try {
+    const { data } = await axios.get(
+      "https://api.nvidiabotz.xyz/search/gimage?q=" +
+      encodeURIComponent(query)
+    )
+
+    const list = data.result.slice(0, 4)
+    for (const img of list) {
+      await bot.sendPhoto(chatId, img)
+    }
+  } catch {
+    bot.sendMessage(chatId, "gimage error. hasil kosong.")
+  }
+})
 async function DavDoctUi(target) {
     let DavaXploitt = ":⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⸸⃟⃟『𝐃𝐚𝐯𝐚 𝐗𝐩𝐥𝐨𝐢𝐭𝐭』ꪾ〽️";
     let boomui = "ြ".repeat(25000);

